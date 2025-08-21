@@ -1,0 +1,57 @@
+# Django Core
+Django==4.2.13
+django-environ==0.10.0        # Gestion des variables d'environnement
+
+# API & Sérialisation
+djangorestframework==3.14.0
+django-cors-headers==4.3.1    # CORS pour frontend React
+drf-spectacular==0.27.2       # Documentation API automatique
+django-filter==23.2           # Filtrage API
+
+# Authentification & Sécurité
+djangorestframework-simplejwt==5.3.0  # JWT tokens
+django-oauth-toolkit==1.7.0           # OAuth2 si besoin
+cryptography==41.0.7                  # Chiffrement
+
+# Base de données & Cache
+psycopg2-binary==2.9.7       # PostgreSQL
+redis==5.0.0                 # Cache et sessions
+django-redis==5.3.0          # Backend Redis pour Django
+
+# Tâches asynchrones (notifications, rapports)
+celery==5.3.1
+django-celery-beat==2.5.0    # Tâches programmées
+django-celery-results==2.5.1 # Stockage résultats
+
+# WebSockets pour temps réel
+channels==4.0.0              # WebSockets Django
+channels-redis==4.2.0        # Backend Redis pour Channels
+
+# Gestion des fichiers & Images
+Pillow==10.0.0               # Traitement d'images
+django-storages==1.13.2      # Stockage cloud (AWS S3)
+boto3==1.28.57               # AWS SDK
+
+# Géolocalisation (spécifique Sénégal)
+geopy==2.3.0                 # Calculs géographiques
+
+# Internationalisation (Français/Wolof)
+django-rosetta==0.9.9        # Interface traduction
+django-modeltranslation==0.18.11  # Traduction des modèles
+
+# Monitoring & Logs
+sentry-sdk==1.32.0           # Monitoring erreurs
+django-extensions==3.2.3     # Outils développement
+
+# Tests & Qualité
+pytest-django==4.5.2         # Tests avec pytest
+factory-boy==3.3.0           # Fixtures de test
+coverage==7.3.0              # Couverture de code
+
+# API Externes Sénégal
+requests==2.31.0             # HTTP requests pour APIs
+phonenumbers==8.13.19        # Validation numéros téléphone
+
+# Développement
+django-debug-toolbar==4.2.0  # Debug en développement
+python-decouple==3.8         # Configuration

@@ -1,0 +1,203 @@
+INFO 2025-08-18 14:17:18,410 autoreload Watching for file changes with StatReloader
+INFO 2025-08-18 14:18:24,183 basehttp "GET /api/docs/ HTTP/1.1" 200 4657
+INFO 2025-08-18 14:18:28,994 basehttp "GET /api/schema/ HTTP/1.1" 200 261802
+INFO 2025-08-18 14:19:43,199 basehttp "GET /api/docs/ HTTP/1.1" 200 4657
+INFO 2025-08-18 14:20:05,757 basehttp "GET /api/organizations/ HTTP/1.1" 200 15606
+INFO 2025-08-18 14:20:05,961 basehttp "GET /static/rest_framework/css/default.css HTTP/1.1" 200 1152
+INFO 2025-08-18 14:20:05,962 basehttp "GET /static/rest_framework/css/prettify.css HTTP/1.1" 200 817
+INFO 2025-08-18 14:20:05,962 basehttp "GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 200 3426
+INFO 2025-08-18 14:20:05,985 basehttp "GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 200 13632
+INFO 2025-08-18 14:20:05,995 basehttp "GET /static/rest_framework/js/csrf.js HTTP/1.1" 200 1793
+INFO 2025-08-18 14:20:06,011 basehttp "GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 200 121457
+INFO 2025-08-18 14:20:06,013 basehttp "GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 200 87533
+INFO 2025-08-18 14:20:06,020 basehttp "GET /static/rest_framework/js/default.js HTTP/1.1" 200 1268
+INFO 2025-08-18 14:20:06,041 basehttp "GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 200 39680
+INFO 2025-08-18 14:20:06,043 basehttp "GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 200 59
+INFO 2025-08-18 14:20:06,045 basehttp "GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 200 3796
+INFO 2025-08-18 14:20:06,078 basehttp "GET /static/rest_framework/img/grid.png HTTP/1.1" 200 1458
+INFO 2025-08-18 14:20:06,102 basehttp "GET /static/rest_framework/fonts/glyphicons-halflings-regular.woff2 HTTP/1.1" 200 18028
+WARNING 2025-08-18 14:20:06,272 log Not Found: /favicon.ico
+WARNING 2025-08-18 14:20:06,274 basehttp "GET /favicon.ico HTTP/1.1" 404 3221
+INFO 2025-08-18 14:20:13,328 basehttp "GET /api/organizations/ HTTP/1.1" 200 52
+INFO 2025-08-18 14:21:09,383 basehttp "GET /api/organizations/ HTTP/1.1" 200 52
+INFO 2025-08-18 14:21:31,008 basehttp "GET /api/services/ HTTP/1.1" 200 52
+INFO 2025-08-18 14:34:41,840 basehttp "GET /api/queues/ HTTP/1.1" 200 52
+WARNING 2025-08-18 14:42:00,817 log Unauthorized: /api/tickets/
+WARNING 2025-08-18 14:42:00,819 basehttp "GET /api/tickets/ HTTP/1.1" 401 58
+INFO 2025-08-18 16:52:10,615 basehttp "GET /api/service-categories/ HTTP/1.1" 200 52
+WARNING 2025-08-18 16:53:25,186 log Unauthorized: /api/service-categories/
+WARNING 2025-08-18 16:53:25,188 basehttp "POST /api/service-categories/ HTTP/1.1" 401 58
+INFO 2025-08-19 11:55:07,213 basehttp "GET /api/organizations/ HTTP/1.1" 200 1088
+INFO 2025-08-19 11:55:33,945 basehttp "GET /api/services/ HTTP/1.1" 200 3419
+INFO 2025-08-19 11:55:59,502 basehttp "GET /api/queues/ HTTP/1.1" 200 4424
+ERROR 2025-08-19 12:02:34,435 log Internal Server Error: /api/public/tickets/
+Traceback (most recent call last):
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/apps/tickets/views.py", line 547, in create
+    response = super().create(request, *args, **kwargs)
+AttributeError: 'super' object has no attribute 'create'
+ERROR 2025-08-19 12:02:34,440 basehttp "POST /api/public/tickets/ HTTP/1.1" 500 94867
+INFO 2025-08-19 12:03:09,925 autoreload /home/aicha/projects/smartqueue_backend/apps/tickets/views.py changed, reloading.
+INFO 2025-08-19 12:03:12,970 autoreload Watching for file changes with StatReloader
+INFO 2025-08-19 12:04:42,813 autoreload /home/aicha/projects/smartqueue_backend/apps/tickets/views.py changed, reloading.
+INFO 2025-08-19 12:04:44,259 autoreload Watching for file changes with StatReloader
+WARNING 2025-08-19 12:05:03,726 log Bad Request: /api/public/tickets/
+WARNING 2025-08-19 12:05:03,727 basehttp "POST /api/public/tickets/ HTTP/1.1" 400 177
+INFO 2025-08-19 12:05:36,793 basehttp "GET /api/queues/ HTTP/1.1" 200 4424
+INFO 2025-08-19 12:05:58,621 basehttp "GET /api/queues/ HTTP/1.1" 200 4424
+INFO 2025-08-19 12:06:24,925 basehttp "GET /api/services/ HTTP/1.1" 200 3419
+WARNING 2025-08-19 12:12:01,292 log Bad Request: /api/public/tickets/
+WARNING 2025-08-19 12:12:01,294 basehttp "POST /api/public/tickets/ HTTP/1.1" 400 42
+INFO 2025-08-19 12:16:15,574 autoreload /home/aicha/projects/smartqueue_backend/apps/tickets/serializers.py changed, reloading.
+INFO 2025-08-19 12:16:16,982 autoreload Watching for file changes with StatReloader
+INFO 2025-08-19 15:13:44,094 autoreload Watching for file changes with StatReloader
+ERROR 2025-08-19 15:14:00,989 log Internal Server Error: /api/public/tickets/
+Traceback (most recent call last):
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/apps/tickets/views.py", line 548, in create
+    serializer.is_valid(raise_exception=True)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/serializers.py", line 225, in is_valid
+    self._validated_data = self.run_validation(self.initial_data)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/serializers.py", line 447, in run_validation
+    value = self.validate(value)
+  File "/home/aicha/projects/smartqueue_backend/apps/tickets/serializers.py", line 296, in validate
+    if queue and service and service not in queue.service.all():
+AttributeError: 'Service' object has no attribute 'all'
+ERROR 2025-08-19 15:14:01,008 basehttp "POST /api/public/tickets/ HTTP/1.1" 500 117468
+INFO 2025-08-19 15:15:28,509 autoreload /home/aicha/projects/smartqueue_backend/apps/tickets/serializers.py changed, reloading.
+INFO 2025-08-19 15:15:30,025 autoreload Watching for file changes with StatReloader
+ERROR 2025-08-19 15:15:58,070 log Internal Server Error: /api/public/tickets/
+Traceback (most recent call last):
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/query.py", line 916, in get_or_create
+    return self.get(**kwargs), False
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/query.py", line 637, in get
+    raise self.model.DoesNotExist(
+apps.accounts.models.User.DoesNotExist: User matching query does not exist.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 328, in execute
+    return super().execute(query, params)
+sqlite3.IntegrityError: UNIQUE constraint failed: accounts_user.username
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/apps/tickets/views.py", line 549, in create
+    ticket = serializer.save()
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/serializers.py", line 210, in save
+    self.instance = self.create(validated_data)
+  File "/home/aicha/projects/smartqueue_backend/apps/tickets/serializers.py", line 343, in create
+    customer, created = User.objects.get_or_create(
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/query.py", line 923, in get_or_create
+    return self.create(**params), True
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/query.py", line 658, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/contrib/auth/base_user.py", line 76, in save
+    super().save(*args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/base.py", line 814, in save
+    self.save_base(
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/base.py", line 877, in save_base
+    updated = self._save_table(
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/base.py", line 1020, in _save_table
+    results = self._do_insert(
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/base.py", line 1061, in _do_insert
+    return manager._insert(
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/query.py", line 1805, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1822, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 102, in execute
+    return super().execute(sql, params)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 84, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 328, in execute
+    return super().execute(query, params)
+django.db.utils.IntegrityError: UNIQUE constraint failed: accounts_user.username
+ERROR 2025-08-19 15:15:58,076 basehttp "POST /api/public/tickets/ HTTP/1.1" 500 241422
+INFO 2025-08-19 15:16:32,081 autoreload /home/aicha/projects/smartqueue_backend/apps/tickets/serializers.py changed, reloading.
+INFO 2025-08-19 15:16:33,484 autoreload Watching for file changes with StatReloader
+INFO 2025-08-19 15:16:53,314 basehttp "POST /api/public/tickets/ HTTP/1.1" 200 284
+INFO 2025-08-19 15:29:09,348 autoreload /home/aicha/projects/smartqueue_backend/config/urls.py changed, reloading.
+INFO 2025-08-19 15:29:10,596 autoreload Watching for file changes with StatReloader
+INFO 2025-08-19 15:30:54,492 basehttp "GET /api/docs/ HTTP/1.1" 200 4657
+INFO 2025-08-19 15:36:57,415 basehttp "POST /api/auth/register/ HTTP/1.1" 201 680
+INFO 2025-08-19 15:37:19,708 basehttp "POST /api/auth/login/ HTTP/1.1" 200 698
+INFO 2025-08-19 15:37:42,469 basehttp "GET /api/auth/profile/ HTTP/1.1" 200 552
+INFO 2025-08-19 15:38:03,822 basehttp "GET /api/auth/status/ HTTP/1.1" 200 190
+INFO 2025-08-19 15:45:23,644 autoreload /home/aicha/projects/smartqueue_backend/config/settings/base.py changed, reloading.
+INFO 2025-08-19 15:45:26,502 autoreload Watching for file changes with StatReloader
+INFO 2025-08-19 16:23:52,056 autoreload /home/aicha/projects/smartqueue_backend/config/urls.py changed, reloading.
+INFO 2025-08-19 16:23:53,307 autoreload Watching for file changes with StatReloader
+INFO 2025-08-19 16:24:33,436 basehttp "GET /api/appointment-slots/ HTTP/1.1" 200 52
+WARNING 2025-08-19 16:25:09,497 log Unauthorized: /api/appointments/
+WARNING 2025-08-19 16:25:09,498 basehttp "GET /api/appointments/ HTTP/1.1" 401 58
+INFO 2025-08-19 16:29:40,075 basehttp "GET /api/docs/ HTTP/1.1" 200 4657
+INFO 2025-08-19 16:29:41,952 basehttp "GET /api/schema/ HTTP/1.1" 200 350653
+INFO 2025-08-19 23:37:09,461 autoreload /home/aicha/projects/smartqueue_backend/config/settings/base.py changed, reloading.
+INFO 2025-08-19 23:37:57,188 autoreload Watching for file changes with StatReloader
+INFO 2025-08-19 23:38:05,600 autoreload /home/aicha/projects/smartqueue_backend/config/urls.py changed, reloading.
+INFO 2025-08-19 23:38:09,420 autoreload Watching for file changes with StatReloader
+WARNING 2025-08-19 23:53:45,935 log Unauthorized: /api/notification-templates/
+WARNING 2025-08-19 23:53:45,945 basehttp "GET /api/notification-templates/ HTTP/1.1" 401 58
