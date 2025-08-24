@@ -19,6 +19,8 @@ urlpatterns = [
     path('api/auth/', include('apps.accounts.urls')),  # APIs d'authentification
     path('api/', include('apps.appointments.urls')),   # APIs de rendez-vous
     path('api/', include('apps.notifications.urls')),  # APIs de notifications
+    path('api/payments/', include('apps.payments.urls')),  # APIs de paiements
+    path('api/analytics/', include('apps.analytics.urls')),  # APIs d'analytics
     
     # Documentation API automatique (Swagger)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

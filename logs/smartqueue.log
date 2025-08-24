@@ -201,3 +201,107 @@ INFO 2025-08-19 23:38:05,600 autoreload /home/aicha/projects/smartqueue_backend/
 INFO 2025-08-19 23:38:09,420 autoreload Watching for file changes with StatReloader
 WARNING 2025-08-19 23:53:45,935 log Unauthorized: /api/notification-templates/
 WARNING 2025-08-19 23:53:45,945 basehttp "GET /api/notification-templates/ HTTP/1.1" 401 58
+INFO 2025-08-22 15:11:12,330 autoreload /home/aicha/projects/smartqueue_backend/config/urls.py changed, reloading.
+INFO 2025-08-23 17:53:39,596 autoreload Watching for file changes with StatReloader
+WARNING 2025-08-23 17:54:08,586 log Unauthorized: /api/analytics/api/organization-metrics/
+WARNING 2025-08-23 17:54:08,587 basehttp "GET /api/analytics/api/organization-metrics/ HTTP/1.1" 401 58
+INFO 2025-08-23 17:54:40,019 basehttp "GET /api/docs/ HTTP/1.1" 200 4657
+WARNING 2025-08-23 17:55:06,353 log Unauthorized: /api/analytics/api/dashboard/
+WARNING 2025-08-23 17:55:06,367 basehttp "GET /api/analytics/api/dashboard/ HTTP/1.1" 401 58
+WARNING 2025-08-23 17:58:56,134 log Bad Request: /api/auth/login/
+WARNING 2025-08-23 17:58:56,147 basehttp "POST /api/auth/login/ HTTP/1.1" 400 66
+WARNING 2025-08-23 17:59:21,649 log Bad Request: /api/auth/login/
+WARNING 2025-08-23 17:59:21,650 basehttp "POST /api/auth/login/ HTTP/1.1" 400 66
+WARNING 2025-08-23 18:00:47,750 log Bad Request: /api/auth/token/
+WARNING 2025-08-23 18:00:47,752 basehttp "POST /api/auth/token/ HTTP/1.1" 400 42
+WARNING 2025-08-23 18:01:09,650 log Unauthorized: /api/auth/token/
+WARNING 2025-08-23 18:01:09,651 basehttp "POST /api/auth/token/ HTTP/1.1" 401 79
+INFO 2025-08-23 18:02:21,871 basehttp "POST /api/auth/token/ HTTP/1.1" 200 793
+WARNING 2025-08-23 18:13:08,496 log Unauthorized: /api/analytics/api/dashboard/
+WARNING 2025-08-23 18:13:08,498 basehttp "GET /api/analytics/api/dashboard/ HTTP/1.1" 401 10168
+INFO 2025-08-23 18:13:08,809 basehttp "GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 200 3426
+INFO 2025-08-23 18:13:08,810 basehttp "GET /static/rest_framework/css/default.css HTTP/1.1" 200 1152
+INFO 2025-08-23 18:13:08,814 basehttp "GET /static/rest_framework/css/prettify.css HTTP/1.1" 200 817
+INFO 2025-08-23 18:13:08,844 basehttp "GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 200 3796
+INFO 2025-08-23 18:13:08,861 basehttp "GET /static/rest_framework/js/default.js HTTP/1.1" 200 1268
+INFO 2025-08-23 18:13:08,863 basehttp "GET /static/rest_framework/js/csrf.js HTTP/1.1" 200 1793
+INFO 2025-08-23 18:13:08,865 basehttp "GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 200 87533
+INFO 2025-08-23 18:13:08,875 basehttp "GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 200 39680
+INFO 2025-08-23 18:13:08,879 basehttp "GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 200 13632
+INFO 2025-08-23 18:13:08,897 basehttp "GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 200 121457
+INFO 2025-08-23 18:13:08,948 basehttp "GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 200 59
+INFO 2025-08-23 18:13:08,982 basehttp "GET /static/rest_framework/img/grid.png HTTP/1.1" 200 1458
+WARNING 2025-08-23 18:13:09,539 log Not Found: /favicon.ico
+WARNING 2025-08-23 18:13:09,541 basehttp "GET /favicon.ico HTTP/1.1" 404 3765
+INFO 2025-08-23 18:13:30,763 basehttp "GET /api/docs/ HTTP/1.1" 200 4657
+INFO 2025-08-23 18:13:32,798 basehttp "GET /api/schema/ HTTP/1.1" 200 545854
+WARNING 2025-08-23 18:14:41,599 log Unauthorized: /api/analytics/api/dashboard/
+WARNING 2025-08-23 18:14:41,600 basehttp "GET /api/analytics/api/dashboard/?format=json HTTP/1.1" 401 58
+WARNING 2025-08-23 18:14:42,110 log Not Found: /favicon.ico
+WARNING 2025-08-23 18:14:42,121 basehttp "GET /favicon.ico HTTP/1.1" 404 3765
+WARNING 2025-08-23 18:14:46,314 log Unauthorized: /api/analytics/api/dashboard/
+WARNING 2025-08-23 18:14:46,316 basehttp "GET /api/analytics/api/dashboard/?format=api HTTP/1.1" 401 10223
+ERROR 2025-08-23 18:16:26,674 log Internal Server Error: /api/analytics/api/dashboard/
+Traceback (most recent call last):
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/rest_framework/decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+  File "/home/aicha/projects/smartqueue_backend/apps/analytics/views.py", line 319, in dashboard_overview
+    peak_hours = OrganizationMetrics.objects.filter(
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/query.py", line 592, in aggregate
+    return self.query.chain().get_aggregation(self.db, kwargs)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/sql/query.py", line 554, in get_aggregation
+    result = compiler.execute_sql(SINGLE)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1549, in execute_sql
+    sql, params = self.as_sql()
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 736, in as_sql
+    extra_select, order_by, group_by = self.pre_sql_setup(
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 84, in pre_sql_setup
+    self.setup_query(with_col_aliases=with_col_aliases)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 73, in setup_query
+    self.select, self.klass_info, self.annotation_col_map = self.get_select(
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 296, in get_select
+    sql, params = self.compile(col)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 544, in compile
+    sql, params = vendor_impl(self, self.connection)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/expressions.py", line 28, in as_sqlite
+    sql, params = self.as_sql(compiler, connection, **extra_context)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/aggregates.py", line 143, in as_sql
+    return super().as_sql(compiler, connection, **extra_context)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/models/expressions.py", line 964, in as_sql
+    connection.ops.check_expression_support(self)
+  File "/home/aicha/projects/smartqueue_backend/venv/lib/python3.10/site-packages/django/db/backends/sqlite3/operations.py", line 57, in check_expression_support
+    raise NotSupportedError(
+django.db.utils.NotSupportedError: You cannot use Sum, Avg, StdDev, and Variance aggregations on date/time fields in sqlite3 since date/time is saved as text.
+ERROR 2025-08-23 18:16:26,678 basehttp "GET /api/analytics/api/dashboard/ HTTP/1.1" 500 166066
+INFO 2025-08-23 18:16:26,680 basehttp - Broken pipe from ('127.0.0.1', 53390)
+INFO 2025-08-23 18:17:14,984 autoreload /home/aicha/projects/smartqueue_backend/apps/analytics/views.py changed, reloading.
+INFO 2025-08-23 18:17:15,064 autoreload Watching for file changes with StatReloader
+WARNING 2025-08-23 22:59:08,042 log Unauthorized: /api/analytics/api/dashboard/
+WARNING 2025-08-23 22:59:08,044 basehttp "GET /api/analytics/api/dashboard/?format=api HTTP/1.1" 401 10223
+WARNING 2025-08-23 22:59:10,704 log Unauthorized: /api/analytics/api/
+WARNING 2025-08-23 22:59:10,705 basehttp "GET /api/analytics/api/?format=api HTTP/1.1" 401 9997
+WARNING 2025-08-23 22:59:16,268 log Unauthorized: /api/
+WARNING 2025-08-23 22:59:16,270 basehttp "GET /api/?format=api HTTP/1.1" 401 9819
+WARNING 2025-08-23 22:59:19,902 log Unauthorized: /api/
+WARNING 2025-08-23 22:59:19,909 basehttp "GET /api/?format=api HTTP/1.1" 401 9819
+INFO 2025-08-23 23:03:09,712 basehttp "GET /api/analytics/api/dashboard/ HTTP/1.1" 200 895
+WARNING 2025-08-23 23:03:40,346 log Unauthorized: /api/analytics/api/realtime/
+WARNING 2025-08-23 23:03:40,347 basehttp "GET /api/analytics/api/realtime/ HTTP/1.1" 401 172
+INFO 2025-08-23 23:04:57,117 basehttp "POST /api/auth/token/ HTTP/1.1" 200 793
+INFO 2025-08-23 23:05:13,970 basehttp "GET /api/analytics/api/realtime/ HTTP/1.1" 200 1884

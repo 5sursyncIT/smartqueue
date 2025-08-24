@@ -21,6 +21,159 @@ from apps.organizations.models import Organization
 from apps.services.models import Service, ServiceCategory
 from apps.queues.models import Queue
 from apps.tickets.models import Ticket
+from apps.analytics.models import (
+    OrganizationMetrics, ServiceMetrics, QueueMetrics, CustomerSatisfaction
+)
+from decimal import Decimal
+import random
+
+def create_analytics_data(organizations, services, queues, clients):
+    """Crée des données analytics de test réalistes"""
+    
+    today = timezone.now().date()
+    yesterday = today - timedelta(days=1)
+    last_week = today - timedelta(days=7)
+    
+    print("📊 Création des métriques d'organisations...")
+    
+    # Métriques d'organisations pour les 7 derniers jours
+    for org in organizations:
+        for i in range(7):
+            date = today - timedelta(days=i)
+            
+            # Générer des données réalistes selon le type d'organisation
+            if org.type == 'bank':
+                tickets_issued = random.randint(30, 80)
+                tickets_served = random.randint(25, tickets_issued)
+                avg_wait = random.randint(15, 45)
+                revenue = Decimal(random.uniform(50000, 150000))
+            elif org.type == 'hospital':
+                tickets_issued = random.randint(50, 120)
+                tickets_served = random.randint(40, tickets_issued)
+                avg_wait = random.randint(30, 90)
+                revenue = Decimal(random.uniform(100000, 300000))
+            else:  # government
+                tickets_issued = random.randint(20, 60)
+                tickets_served = random.randint(15, tickets_issued)
+                avg_wait = random.randint(45, 120)
+                revenue = Decimal(0)  # Pas de revenus pour administration
+            
+            metric, created = OrganizationMetrics.objects.get_or_create(
+                organization=org,
+                date=date,
+                defaults={
+                    'tickets_issued': tickets_issued,
+                    'tickets_served': tickets_served,
+                    'tickets_cancelled': random.randint(0, 5),
+                    'tickets_expired': random.randint(0, 3),
+                    'tickets_no_show': random.randint(0, 2),
+                    'appointments_created': random.randint(10, 30) if org.type == 'hospital' else 0,
+                    'appointments_completed': random.randint(8, 25) if org.type == 'hospital' else 0,
+                    'appointments_cancelled': random.randint(0, 3) if org.type == 'hospital' else 0,
+                    'avg_wait_time': avg_wait,
+                    'max_wait_time': avg_wait + random.randint(10, 30),
+                    'avg_service_time': random.randint(5, 20),
+                    'total_ratings': random.randint(5, 20),
+                    'avg_rating': Decimal(random.uniform(3.5, 4.8)),
+                    'peak_hour_start': timezone.now().time().replace(hour=10, minute=0),
+                    'peak_hour_end': timezone.now().time().replace(hour=12, minute=0),
+                    'max_concurrent_customers': random.randint(15, 35),
+                    'total_revenue': revenue
+                }
+            )
+            if created:
+                print(f"✅ Métrique {org.name} - {date}")
+    
+    print("📋 Création des métriques de services...")
+    
+    # Métriques de services
+    for service in services:
+        for i in range(7):
+            date = today - timedelta(days=i)
+            
+            tickets = random.randint(10, 30)
+            served = random.randint(8, tickets)
+            
+            metric, created = ServiceMetrics.objects.get_or_create(
+                service=service,
+                organization=service.organization,
+                date=date,
+                defaults={
+                    'tickets_issued': tickets,
+                    'tickets_served': served,
+                    'tickets_cancelled': random.randint(0, 3),
+                    'total_wait_time': served * random.randint(10, 40),
+                    'total_service_time': served * random.randint(5, 15),
+                    'revenue': Decimal(served * (service.cost or 0)),
+                    'total_ratings': random.randint(2, 8),
+                    'total_rating_score': random.randint(15, 35)
+                }
+            )
+            if created:
+                print(f"✅ Métrique service {service.name} - {date}")
+    
+    print("📊 Création des métriques de files d'attente...")
+    
+    # Métriques de files d'attente (horaires pour aujourd'hui)
+    for queue in queues:
+        for hour in range(8, 18):  # 8h à 18h
+            timestamp = timezone.now().replace(hour=hour, minute=0, second=0, microsecond=0)
+            
+            metric, created = QueueMetrics.objects.get_or_create(
+                queue=queue,
+                timestamp=timestamp,
+                defaults={
+                    'waiting_customers': random.randint(0, 15),
+                    'current_wait_time': random.randint(5, 60),
+                    'tickets_issued_hour': random.randint(3, 12),
+                    'tickets_served_hour': random.randint(2, 10),
+                    'queue_status': random.choice(['active', 'busy', 'slow'])
+                }
+            )
+            if created and hour % 2 == 0:  # Log seulement quelques heures pour éviter le spam
+                print(f"✅ Métrique file {queue.name} - {hour}h")
+    
+    print("⭐ Création des évaluations de satisfaction...")
+    
+    # Évaluations de satisfaction
+    for i in range(20):  # 20 évaluations
+        client = random.choice(clients)
+        service = random.choice(services)
+        
+        rating = random.choices([1, 2, 3, 4, 5], weights=[2, 3, 10, 30, 15])[0]  # Plus de bonnes notes
+        
+        comments = [
+            "Service rapide et efficace",
+            "Temps d'attente un peu long mais personnel aimable",
+            "Très satisfait de l'accueil",
+            "Pourrait être amélioré",
+            "Excellent service, je recommande",
+            "",  # Pas de commentaire
+            "Personnel compétent et disponible"
+        ]
+        
+        satisfaction, created = CustomerSatisfaction.objects.get_or_create(
+            customer=client,
+            organization=service.organization,
+            service=service,
+            defaults={
+                'rating': rating,
+                'comment': random.choice(comments),
+                'wait_time_rating': random.randint(max(1, rating-1), min(5, rating+1)),
+                'service_quality_rating': random.randint(max(1, rating-1), min(5, rating+1)),
+                'staff_friendliness_rating': random.randint(max(1, rating-1), min(5, rating+1)),
+                'created_at': timezone.now() - timedelta(days=random.randint(0, 7))
+            }
+        )
+        if created:
+            print(f"✅ Évaluation {rating}/5 par {client.first_name}")
+    
+    print(f"📊 Données analytics créées :")
+    print(f"   - {OrganizationMetrics.objects.count()} métriques d'organisations")
+    print(f"   - {ServiceMetrics.objects.count()} métriques de services")
+    print(f"   - {QueueMetrics.objects.count()} métriques de files")
+    print(f"   - {CustomerSatisfaction.objects.count()} évaluations de satisfaction")
+
 
 def create_test_data():
     """Crée des données de test réalistes pour SmartQueue Sénégal"""
@@ -385,11 +538,20 @@ def create_test_data():
     print(f"   - {Queue.objects.count()} files d'attente")
     print(f"   - {Ticket.objects.count()} tickets")
     
+    # ==========================================
+    # 7. CRÉER DES DONNÉES ANALYTICS
+    # ==========================================
+    print("\n📊 Création des données analytics...")
+    
+    create_analytics_data([bhs, hopital, prefecture], bhs_services + hopital_services, queues, clients)
+    
     print(f"\n🚀 Testez maintenant :")
     print(f"   - Interface API: http://localhost:8000/api/docs/")
     print(f"   - Organisations: http://localhost:8000/api/organizations/")
     print(f"   - Services: http://localhost:8000/api/services/")
     print(f"   - Files d'attente: http://localhost:8000/api/queues/")
+    print(f"   - Analytics Dashboard: http://localhost:8000/api/analytics/api/dashboard/")
+    print(f"   - Métriques temps réel: http://localhost:8000/api/analytics/api/realtime/")
 
 if __name__ == '__main__':
     create_test_data()

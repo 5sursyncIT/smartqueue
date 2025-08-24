@@ -78,8 +78,8 @@ LOCAL_APPS = [
     'apps.tickets',       # Tickets des clients
     'apps.appointments',   # Système de rendez-vous
     'apps.notifications',  # SMS, Push, Email pour tickets et RDV
-    # 'apps.analytics',     # Statistiques et rapports (désactivé pour test)
-    # 'apps.payments',      # Orange Money, Wave, Free Money (désactivé pour test)
+    'apps.payments',      # Orange Money, Wave, Free Money
+    'apps.analytics',     # Statistiques et rapports
     # 'apps.locations',     # Géolocalisation Sénégal (désactivé pour test)
 ]
 
