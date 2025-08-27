@@ -6,12 +6,18 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from apps.core.views import home_view
 
 urlpatterns = [
+    # Page d'accueil backend
+    path('', home_view, name='home'),
+    
     # Administration Django
     path('admin/', admin.site.urls),
     
     # APIs principales
+    path('api/core/', include('apps.core.urls')),      # APIs utilitaires core
+    path('api/locations/', include('apps.locations.urls')),  # APIs géolocalisation intelligente
     path('', include('apps.organizations.urls')),
     path('', include('apps.services.urls')),
     path('', include('apps.queues.urls')),

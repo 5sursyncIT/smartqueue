@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartQueue Backend - Système de Files d'Attente Intelligentes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .card ul li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .api-link {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+        }
+        
+        .api-link:hover {
+            background: #5a67d8;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .feature-highlight {
+            background: linear-gradient(45deg, #FFA726, #FF7043);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .feature-highlight h2 {
+            margin-bottom: 15px;
+        }
+        
+        .quick-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            color: #5a67d8;
+            text-decoration: none;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 50px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 SmartQueue Backend</h1>
+            <p>Système de Files d'Attente Intelligentes pour le Sénégal</p>
+            <div class="status-badge">✅ Backend Complet & Opérationnel</div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">11</div>
+                    <div>Applications Django</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div>APIs Fonctionnelles</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div>Régions Sénégal</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">17</div>
+                    <div>Communes Chargées</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-highlight">
+            <h2>🎯 Fonctionnalité Vedette : Géolocalisation Intelligente</h2>
+            <p>Calcul automatique temps de trajet Pikine → Diamniadio avec réorganisation des files selon trafic en temps réel</p>
+        </div>
+
+        <div class="cards-grid">
+            <div class="card">
+                <h3><span class="card-icon">👥</span>Gestion Utilisateurs</h3>
+                <ul>
+                    <li>Comptes clients/staff/admin <a href="/api/auth/" class="api-link">API</a></li>
+                    <li>Support numéros +221 <a href="/api/auth/users/" class="api-link">Voir</a></li>
+                    <li>Authentification JWT <a href="/api/auth/login/" class="api-link">Login</a></li>
+                    <li>Profils multilingues (FR/Wolof) <a href="/api/auth/profile/" class="api-link">Profil</a></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3><span class="card-icon">🏢</span>Organisations</h3>
+                <ul>
+                    <li>Banques, hôpitaux, administrations <a href="/api/organizations/" class="api-link">API</a></li>
+                    <li>Géolocalisation GPS <a href="/api/organizations/nearby/" class="api-link">Proximité</a></li>
+                    <li>Plans d'abonnement <a href="/api/organizations/plans/" class="api-link">Plans</a></li>
+                    <li>6 organisations test Diamniadio <a href="/admin/organizations/" class="api-link">Admin</a></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3><span class="card-icon">📍</span>Géolocalisation Smart</h3>
+                <ul>
+                    <li>Calcul temps de trajet intelligent <a href="/api/locations/calculate-travel/" class="api-link">API</a></li>
+                    <li>Prédiction embouteillages Dakar <a href="/api/locations/traffic/" class="api-link">Trafic</a></li>
+                    <li>Réorganisation automatique files <a href="/api/locations/reorganize/" class="api-link">Auto</a></li>
+                    <li>WebSockets temps réel <a href="/ws/location/updates/1/" class="api-link">WS</a></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3><span class="card-icon">🎫</span>Files & Tickets</h3>
+                <ul>
+                    <li>Tickets virtuels intelligents <a href="/api/tickets/" class="api-link">API</a></li>
+                    <li>Files prioritaires <a href="/api/queues/" class="api-link">Files</a></li>
+                    <li>Estimations temps d'attente <a href="/api/queues/estimate/" class="api-link">Temps</a></li>
+                    <li>QR codes automatiques <a href="/api/tickets/qr/" class="api-link">QR</a></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3><span class="card-icon">💰</span>Paiements Mobiles</h3>
+                <ul>
+                    <li>Wave Money intégration <a href="/api/payments/wave/" class="api-link">Wave</a></li>
+                    <li>Orange Money support <a href="/api/payments/orange/" class="api-link">Orange</a></li>
+                    <li>Free Money compatible <a href="/api/payments/free/" class="api-link">Free</a></li>
+                    <li>Historique transactions <a href="/api/payments/history/" class="api-link">Historique</a></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3><span class="card-icon">📱</span>Notifications</h3>
+                <ul>
+                    <li>SMS multilingues (FR/Wolof) <a href="/api/notifications/sms/" class="api-link">SMS</a></li>
+                    <li>Push notifications <a href="/api/notifications/push/" class="api-link">Push</a></li>
+                    <li>Notifications "Temps de partir" <a href="/api/notifications/departure/" class="api-link">Départ</a></li>
+                    <li>Templates personnalisés <a href="/api/notifications/templates/" class="api-link">Templates</a></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3><span class="card-icon">📅</span>Rendez-vous</h3>
+                <ul>
+                    <li>Système RDV intelligent <a href="/api/appointments/" class="api-link">API</a></li>
+                    <li>Créneaux automatiques <a href="/api/appointments/slots/" class="api-link">Créneaux</a></li>
+                    <li>Rappels automatiques <a href="/api/appointments/reminders/" class="api-link">Rappels</a></li>
+                    <li>Gestion conflits <a href="/api/appointments/conflicts/" class="api-link">Conflits</a></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3><span class="card-icon">📊</span>Analytics & KPIs</h3>
+                <ul>
+                    <li>Métriques temps réel <a href="/api/analytics/metrics/" class="api-link">Métriques</a></li>
+                    <li>Statistiques organisations <a href="/api/analytics/organizations/" class="api-link">Stats</a></li>
+                    <li>Rapports automatiques <a href="/api/analytics/reports/" class="api-link">Rapports</a></li>
+                    <li>Dashboards interactifs <a href="/api/analytics/dashboard/" class="api-link">Dashboard</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="quick-links">
+            <a href="/api/docs/" class="btn">📚 Documentation API Swagger</a>
+            <a href="/admin/" class="btn">⚙️ Administration Django</a>
+            <a href="/api/schema/" class="btn">🔧 Schéma API</a>
+            <a href="/ws/admin/dashboard/" class="btn">📡 WebSockets Dashboard</a>
+        </div>
+
+        <div class="footer">
+            <p>🇸🇳 SmartQueue Backend - Développé pour le Sénégal avec ❤️</p>
+            <p>Architecture : Django + DRF + WebSockets + Celery + Redis + PostgreSQL</p>
+            <p>Fonctionnalités : Géolocalisation Intelligente • Paiements Mobiles • Notifications Multilingues</p>
+        </div>
+    </div>
+</body>
+</html>

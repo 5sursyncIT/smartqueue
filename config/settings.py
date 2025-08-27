@@ -31,15 +31,41 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Third party apps
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'corsheaders',
+    'drf_spectacular',
+    
+    # SmartQueue apps
+    'apps.core',
+    'apps.accounts',
+    'apps.organizations', 
+    'apps.services',
+    'apps.queues',
+    'apps.tickets',
+    'apps.appointments',
+    'apps.payments',
+    'apps.notifications',
+    'apps.analytics',
 ]
 
 MIDDLEWARE = [
+    # SmartQueue security middleware (en premier)
+    'apps.core.middleware.SecurityMiddleware',
+    
+    # CORS (avant CommonMiddleware)
+    'corsheaders.middleware.CorsMiddleware',
+    
+    # Django standard middleware
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -47,6 +73,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    # SmartQueue custom middleware
+    'apps.core.middleware.MaintenanceMiddleware',
+    'apps.core.middleware.APIVersionMiddleware', 
+    'apps.core.middleware.ActivityLogMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -103,13 +134,22 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Dakar'
 
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
+
+LANGUAGES = [
+    ('fr', 'Français'),
+    ('wo', 'Wolof'),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 
 # Static files (CSS, JavaScript, Images)
@@ -121,3 +161,234 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# =============================================================================
+# SMARTQUEUE CONFIGURATION
+# =============================================================================
+
+# Modèle utilisateur personnalisé
+AUTH_USER_MODEL = 'accounts.User'
+
+# Django REST Framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/hour',
+        'user': '1000/hour'
+    }
+}
+
+# JWT Configuration
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+}
+
+# CORS Configuration
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000", 
+    "https://smartqueue.sn",
+    "https://app.smartqueue.sn",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'api-version',
+]
+
+# API Documentation avec Spectacular
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'SmartQueue API',
+    'DESCRIPTION': 'API pour le système de gestion de files d\'attente SmartQueue Sénégal',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': '/api/v1',
+}
+
+# Cache Configuration (Redis en production)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'smartqueue-cache',
+        'TIMEOUT': 300,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
+        }
+    }
+}
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'smartqueue.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'apps': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
+
+# Email Configuration (pour développement)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@smartqueue.sn'
+ADMIN_EMAIL = 'admin@smartqueue.sn'
+
+# SMS Configuration (APIs Sénégal)
+SMS_CONFIG = {
+    'ENABLED': True,
+    'DEFAULT_PROVIDER': 'orange',  # orange, free, wave
+    'PROVIDERS': {
+        'orange': {
+            'API_URL': 'https://api.orange.com/smsmessaging/v1/',
+            'CLIENT_ID': '',  # À configurer
+            'CLIENT_SECRET': '',
+        },
+        'free': {
+            'API_URL': 'https://api.free.sn/sms/',
+            'API_KEY': '',
+        },
+    }
+}
+
+# Payment Configuration (Mobile Money Sénégal)
+PAYMENT_CONFIG = {
+    'ENABLED': True,
+    'PROVIDERS': {
+        'wave': {
+            'API_URL': 'https://api.wave.com/v1/',
+            'API_KEY': '',
+            'WEBHOOK_SECRET': '',
+        },
+        'orange_money': {
+            'API_URL': 'https://api.orange.com/orange-money-webpay/dev/v1/',
+            'MERCHANT_KEY': '',
+            'MERCHANT_CODE': '',
+        },
+        'free_money': {
+            'API_URL': 'https://api.free.sn/money/',
+            'API_KEY': '',
+        },
+    }
+}
+
+# Storage Configuration
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Security Settings (pour production)
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+# SmartQueue Specific Settings
+SMARTQUEUE_CONFIG = {
+    'SITE_NAME': 'SmartQueue Sénégal',
+    'SITE_URL': 'https://smartqueue.sn',
+    'SUPPORT_EMAIL': 'support@smartqueue.sn',
+    'SUPPORT_PHONE': '+221338000000',
+    
+    # Limites par défaut
+    'DEFAULT_TICKET_EXPIRY_MINUTES': 30,
+    'DEFAULT_APPOINTMENT_DURATION_MINUTES': 30,
+    'MAX_TICKETS_PER_USER_PER_DAY': 5,
+    'MAX_APPOINTMENTS_PER_USER_PER_DAY': 3,
+    
+    # Notifications
+    'SMS_ENABLED': True,
+    'EMAIL_ENABLED': True,
+    'PUSH_ENABLED': True,
+    
+    # Queue Configuration
+    'DEFAULT_QUEUE_CAPACITY': 100,
+    'DEFAULT_SERVICE_TIME_MINUTES': 5,
+    'QUEUE_AUTO_CLOSE_HOUR': 18,  # 18h00
+    
+    # File upload limits
+    'MAX_AVATAR_SIZE_MB': 2,
+    'MAX_DOCUMENT_SIZE_MB': 10,
+    'ALLOWED_AVATAR_TYPES': ['image/jpeg', 'image/png', 'image/webp'],
+}
+
+# IPs bloquées (peut être géré via admin)
+BLOCKED_IPS = []
+
+# Rate limiting
+RATE_LIMIT_ENABLED = True
+
+# Version API par défaut
+API_VERSION = 'v1'

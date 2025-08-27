@@ -70,7 +70,7 @@ THIRD_PARTY_APPS = [
 
 # NOS applications SmartQueue
 LOCAL_APPS = [
-    # 'apps.core',           # Utilitaires communs (désactivé temporairement)
+    'apps.core',           # Utilitaires communs
     'apps.accounts',       # Utilisateurs et authentification
     'apps.organizations',  # Banques, hôpitaux, administrations
     'apps.services',       # Services offerts (ouverture compte, consultation...)
@@ -80,7 +80,7 @@ LOCAL_APPS = [
     'apps.notifications',  # SMS, Push, Email pour tickets et RDV
     'apps.payments',      # Orange Money, Wave, Free Money
     'apps.analytics',     # Statistiques et rapports
-    # 'apps.locations',     # Géolocalisation Sénégal (désactivé pour test)
+    'apps.locations',     # Géolocalisation intelligente Sénégal
 ]
 
 # Toutes les applications ensemble
