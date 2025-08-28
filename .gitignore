@@ -1,0 +1,30 @@
+# --- Environnement Python virtuel
+venv/
+.venv/
+
+# --- Cache Python
+_pycache_/
+*.py[cod]
+
+# --- Base de données locale
+db.sqlite3
+
+# --- Paramètres privés
+.env
+.env.*
+
+# --- Dossiers générés automatiquement
+*.log
+*.pot
+*.pyc
+*.mo
+
+# --- Dossier media (uploads locaux)
+media/
+
+# --- VS Code
+.vscode/
+
+# --- Node / Claude Code (si tu utilises Claude localement)
+node_modules/
+.claude/
