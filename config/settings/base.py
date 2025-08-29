@@ -68,19 +68,24 @@ THIRD_PARTY_APPS = [
     # 'django_extensions',           # Outils utiles pour le développement
 ]
 
-# NOS applications SmartQueue
+# NOS applications SmartQueue (Architecture restructurée ✅)
 LOCAL_APPS = [
-    'apps.core',           # Utilitaires communs
-    'apps.accounts',       # Utilisateurs et authentification
-    'apps.organizations',  # Banques, hôpitaux, administrations
-    'apps.services',       # Services offerts (ouverture compte, consultation...)
-    'apps.queues',        # Files d'attente virtuelles
-    'apps.tickets',       # Tickets des clients
-    'apps.appointments',   # Système de rendez-vous
-    'apps.notifications',  # SMS, Push, Email pour tickets et RDV
-    'apps.payments',      # Orange Money, Wave, Free Money
-    'apps.analytics',     # Statistiques et rapports
-    'apps.locations',     # Géolocalisation intelligente Sénégal
+    'apps.core',              # Utilitaires communs
+    'apps.accounts',          # Utilisateurs et authentification  
+    'apps.business',          # Organizations + Services unifiés ✅
+    'apps.queue_management',  # Queues + Tickets unifiés ✅
+    # À réactiver après correction des dépendances (prochaine étape)
+    # 'apps.locations',         # Géolocalisation intelligente
+    # 'apps.appointments',      # Système de rendez-vous
+    # 'apps.notifications',     # SMS, Push, Email
+    # 'apps.payments',         # Orange Money, Wave, Free Money
+    # 'apps.analytics',        # Statistiques et rapports
+    
+    # === ANCIENNES APPS (REMPLACÉES) ===
+    # 'apps.organizations',  # REMPLACÉE par apps.business
+    # 'apps.services',       # REMPLACÉE par apps.business
+    # 'apps.queues',        # REMPLACÉE par apps.queue_management
+    # 'apps.tickets',       # REMPLACÉE par apps.queue_management
 ]
 
 # Toutes les applications ensemble

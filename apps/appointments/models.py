@@ -29,14 +29,14 @@ class AppointmentSlot(models.Model):
     
     # Relations
     organization = models.ForeignKey(
-        'organizations.Organization',
+        'business.Organization',
         on_delete=models.CASCADE,
         related_name='appointment_slots',
         verbose_name=_('Organisation')
     )
     
     service = models.ForeignKey(
-        'services.Service',
+        'business.Service',
         on_delete=models.CASCADE,
         related_name='appointment_slots',
         verbose_name=_('Service')
@@ -197,14 +197,14 @@ class Appointment(models.Model):
     
     # Raccourcis (dénormalisés pour performance)
     organization = models.ForeignKey(
-        'organizations.Organization',
+        'business.Organization',
         on_delete=models.CASCADE,
         related_name='appointments',
         verbose_name=_('Organisation')
     )
     
     service = models.ForeignKey(
-        'services.Service',
+        'business.Service',
         on_delete=models.CASCADE,
         related_name='appointments',
         verbose_name=_('Service')

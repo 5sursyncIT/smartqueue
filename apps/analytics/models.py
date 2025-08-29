@@ -28,7 +28,7 @@ class OrganizationMetrics(models.Model):
     
     # Relations
     organization = models.ForeignKey(
-        'organizations.Organization',
+        'business.Organization',
         on_delete=models.CASCADE,
         related_name='metrics',
         verbose_name=_('Organisation')
@@ -200,14 +200,14 @@ class ServiceMetrics(models.Model):
     
     # Relations
     service = models.ForeignKey(
-        'services.Service',
+        'business.Service',
         on_delete=models.CASCADE,
         related_name='metrics',
         verbose_name=_('Service')
     )
     
     organization = models.ForeignKey(
-        'organizations.Organization',
+        'business.Organization',
         on_delete=models.CASCADE,
         related_name='service_metrics',
         verbose_name=_('Organisation')
@@ -289,7 +289,7 @@ class QueueMetrics(models.Model):
     
     # Relations
     queue = models.ForeignKey(
-        'queues.Queue',
+        'queue_management.Queue',
         on_delete=models.CASCADE,
         related_name='metrics',
         verbose_name=_('File d\'attente')
@@ -368,14 +368,14 @@ class CustomerSatisfaction(models.Model):
     )
     
     organization = models.ForeignKey(
-        'organizations.Organization',
+        'business.Organization',
         on_delete=models.CASCADE,
         related_name='satisfaction_ratings',
         verbose_name=_('Organisation')
     )
     
     service = models.ForeignKey(
-        'services.Service',
+        'business.Service',
         on_delete=models.CASCADE,
         related_name='satisfaction_ratings',
         verbose_name=_('Service')
@@ -383,7 +383,7 @@ class CustomerSatisfaction(models.Model):
     
     # Objet évalué (ticket ou RDV)
     ticket = models.ForeignKey(
-        'tickets.Ticket',
+        'queue_management.Ticket',
         on_delete=models.CASCADE,
         null=True, blank=True,
         related_name='ratings',

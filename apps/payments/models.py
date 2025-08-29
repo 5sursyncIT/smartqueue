@@ -226,13 +226,13 @@ class Payment(models.Model):
     
     # Objets liés (optionnels)
     organization = models.ForeignKey(
-        'organizations.Organization',
+        'business.Organization',
         on_delete=models.CASCADE,
         verbose_name="Organisation"
     )
     
     ticket = models.ForeignKey(
-        'tickets.Ticket',
+        'queue_management.Ticket',
         on_delete=models.CASCADE,
         null=True, blank=True,
         related_name='payments',

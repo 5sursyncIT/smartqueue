@@ -393,7 +393,7 @@ class TravelTimeEstimate(BaseSmartQueueModel):
     
     # Organisation de destination
     organization = models.ForeignKey(
-        'organizations.Organization',
+        'business.Organization',
         on_delete=models.CASCADE,
         verbose_name=_('Organisation')
     )

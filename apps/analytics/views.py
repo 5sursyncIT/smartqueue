@@ -19,10 +19,8 @@ from .models import (
     OrganizationMetrics, ServiceMetrics, QueueMetrics, 
     CustomerSatisfaction, DashboardWidget
 )
-from apps.organizations.models import Organization
-from apps.services.models import Service
-from apps.queues.models import Queue
-from apps.tickets.models import Ticket
+from apps.business.models import Organization, Service
+from apps.queue_management.models import Queue, Ticket
 from apps.appointments.models import Appointment
 
 

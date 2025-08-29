@@ -1,0 +1,1 @@
+# apps/queue_management - Files d'attente et Tickets unifiés

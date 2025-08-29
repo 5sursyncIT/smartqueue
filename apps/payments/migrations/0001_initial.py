@@ -14,9 +14,9 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('appointments', '0001_initial'),
-        ('organizations', '0001_initial'),
+        ('business', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('tickets', '0001_initial'),
+        ('queue_management', '0001_initial'),
     ]
 
     operations = [
