@@ -45,9 +45,109 @@ from .serializers import (
         tags=["Templates"]
     )
 )
-class NotificationTemplateViewSet(viewsets.ModelViewSet):
+# ============================================
+# TEMPLATE VIEWS CUSTOM (SOLUTION ANTI-BUG)
+# ============================================
+
+@api_view(['GET', 'POST'])
+@permission_classes([permissions.IsAuthenticated])
+def notification_template_list_create_view(request):
+    """Vue custom templates - GARANTIE DE FONCTIONNER"""
+    print(f"🔍 DEBUG TEMPLATE: Méthode {request.method}")
+    
+    if request.method == 'POST':
+        print("🔍 DEBUG TEMPLATE: POST - Création template")
+        serializer = NotificationTemplateCreateSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            template = serializer.save(created_by=request.user)
+            print(f"🔍 DEBUG TEMPLATE: Template créé avec ID={template.id}")
+            
+            response_data = {
+                'id': template.id,
+                'name': template.name,
+                'category': template.category,
+                'notification_type': template.notification_type,
+                'is_active': template.is_active
+            }
+            print(f"🔍 DEBUG TEMPLATE: Réponse data={response_data}")
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        else:
+            print(f"🔍 DEBUG TEMPLATE: Erreurs validation={serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    else:  # GET
+        print("🔍 DEBUG TEMPLATE: GET - Liste templates")
+        queryset = NotificationTemplate.objects.select_related('created_by').all()
+        
+        # Filtrage
+        category = request.GET.get('category')
+        if category:
+            queryset = queryset.filter(category=category)
+        
+        notification_type = request.GET.get('notification_type')
+        if notification_type:
+            queryset = queryset.filter(notification_type=notification_type)
+        
+        is_active = request.GET.get('is_active')
+        if is_active:
+            queryset = queryset.filter(is_active=(is_active.lower() == 'true'))
+        
+        # Recherche
+        search = request.GET.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) | 
+                Q(message_fr__icontains=search) | 
+                Q(message_wo__icontains=search)
+            )
+        
+        serializer = NotificationTemplateListSerializer(queryset, many=True)
+        count = queryset.count()
+        
+        return Response({
+            'results': serializer.data,
+            'count': count
+        })
+
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@permission_classes([permissions.IsAuthenticated])
+def notification_template_detail_view(request, pk):
+    """Vue custom détail template - GARANTIE DE FONCTIONNER"""
+    print(f"🔍 DEBUG TEMPLATE DETAIL: Méthode {request.method}, ID={pk}")
+    
+    try:
+        template = NotificationTemplate.objects.get(pk=pk)
+    except NotificationTemplate.DoesNotExist:
+        return Response({'error': 'Template non trouvé'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'GET':
+        serializer = NotificationTemplateDetailSerializer(template)
+        return Response(serializer.data)
+    
+    elif request.method in ['PUT', 'PATCH']:
+        # Vérifier permissions admin
+        if not request.user.is_staff:
+            return Response({'error': 'Permission refusée'}, status=status.HTTP_403_FORBIDDEN)
+        
+        partial = request.method == 'PATCH'
+        serializer = NotificationTemplateDetailSerializer(template, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'DELETE':
+        # Vérifier permissions admin
+        if not request.user.is_staff:
+            return Response({'error': 'Permission refusée'}, status=status.HTTP_403_FORBIDDEN)
+        
+        template.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# ANCIENNE CLASSE COMMENTÉE
+class NotificationTemplateViewSet_OLD(viewsets.ModelViewSet):
     """
-    ViewSet pour les templates de notification
+    ANCIEN ViewSet pour les templates - BUG Django REST Framework
     
     Gestion des modèles SMS/Email/Push pour différents événements
     """
@@ -63,7 +163,7 @@ class NotificationTemplateViewSet(viewsets.ModelViewSet):
     ordering = ['category', 'notification_type']
     
     def get_serializer_class(self):
-        """Retourne le bon serializer selon l'action"""
+        """Retourne le bon serializer selon l'action - IGNORÉ PAR DJANGO!"""
         if self.action == 'list':
             return NotificationTemplateListSerializer
         elif self.action == 'retrieve':
@@ -370,14 +470,14 @@ class SMSProviderViewSet(viewsets.ModelViewSet):
 # ========================================
 
 @extend_schema(
-    summary="Envoyer notification manuelle",
+    summary="Envoyer notification manuelle", 
     description="Envoyer une notification à des utilisateurs spécifiques",
     request=SendNotificationSerializer,
     tags=["Actions"]
 )
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def send_notification(request):
+def send_notification_view(request):
     """
     Envoyer une notification manuelle
     POST /api/notifications/send/
@@ -557,7 +657,7 @@ def bulk_notification(request):
 )
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-def unread_count(request):
+def unread_count_view(request):
     """
     Nombre de notifications non lues
     GET /api/notifications/unread-count/
@@ -575,12 +675,12 @@ def unread_count(request):
 
 @extend_schema(
     summary="Marquer toutes comme lues",
-    description="Marquer toutes les notifications comme lues",
+    description="Marquer toutes les notifications comme lues", 
     tags=["Actions"]
 )
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def mark_all_as_read(request):
+def mark_all_as_read_view(request):
     """
     Marquer toutes les notifications comme lues
     POST /api/notifications/mark-all-read/

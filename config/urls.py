@@ -23,7 +23,7 @@ urlpatterns = [
     # À réactiver après correction des dépendances (prochaine étape)
     # path('api/locations/', include('apps.locations.urls')),    # APIs géolocalisation intelligente
     # path('api/appointments/', include('apps.appointments.urls')),   # APIs de rendez-vous
-    # path('api/notifications/', include('apps.notifications.urls')), # APIs de notifications  
+    path('api/notifications/', include('apps.notifications.urls')), # APIs de notifications  
     # path('api/payments/', include('apps.payments.urls')),      # APIs de paiements
     # path('api/analytics/', include('apps.analytics.urls')),    # APIs d'analytics
     

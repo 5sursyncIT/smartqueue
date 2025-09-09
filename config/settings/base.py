@@ -77,7 +77,7 @@ LOCAL_APPS = [
     # À réactiver après correction des dépendances (prochaine étape)
     # 'apps.locations',         # Géolocalisation intelligente
     # 'apps.appointments',      # Système de rendez-vous
-    # 'apps.notifications',     # SMS, Push, Email
+    'apps.notifications',     # SMS, Push, Email
     # 'apps.payments',         # Orange Money, Wave, Free Money
     # 'apps.analytics',        # Statistiques et rapports
     
@@ -186,7 +186,7 @@ REST_FRAMEWORK = {
 # ==============================================
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=24),    # Token valable 24h
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),     # Token valable 2h (plus court)
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Refresh token 7 jours
     'ROTATE_REFRESH_TOKENS': True,                   # Nouveau token à chaque refresh
     'BLACKLIST_AFTER_ROTATION': True,               # Invalider l'ancien token
@@ -210,6 +210,38 @@ SPECTACULAR_SETTINGS = {
     'CONTACT': {
         'name': 'Équipe SmartQueue',
         'email': 'dev@smartqueue.sn',
+    },
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SORT_OPERATIONS': False,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': False,
+        'defaultModelRendering': 'example',
+        'defaultModelsExpandDepth': 1,
+        'defaultModelExpandDepth': 1,
+        'docExpansion': 'list',
+        'operationsSorter': 'method',
+        'showExtensions': True,
+        'showCommonExtensions': True,
+        'tryItOutEnabled': True,
+    },
+    'SECURITY': [
+        {
+            'type': 'http',
+            'scheme': 'bearer',
+            'bearerFormat': 'JWT',
+        }
+    ],
+    'APPEND_COMPONENTS': {
+        'securitySchemes': {
+            'jwtAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+            }
+        }
     },
 }
 

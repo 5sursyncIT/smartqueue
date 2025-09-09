@@ -9,6 +9,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 import re
 from .models import User
 
@@ -109,6 +110,30 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            'Login avec Email',
+            summary='Connexion avec adresse email',
+            description='Exemple de connexion avec email',
+            value={
+                'login': 'test@example.com',
+                'password': 'test123'
+            },
+            request_only=True,
+        ),
+        OpenApiExample(
+            'Login avec Téléphone',
+            summary='Connexion avec numéro de téléphone',
+            description='Exemple de connexion avec téléphone sénégalais',
+            value={
+                'login': '+221771234567',
+                'password': 'test123'
+            },
+            request_only=True,
+        ),
+    ]
+)
 class UserLoginSerializer(serializers.Serializer):
     """
     Serializer pour la connexion utilisateur
@@ -118,11 +143,17 @@ class UserLoginSerializer(serializers.Serializer):
     """
     
     login = serializers.CharField(
-        help_text="Numéro de téléphone (+221XXXXXXXXX) ou email"
+        help_text="Numéro de téléphone (+221XXXXXXXXX) ou email",
+        required=True,
+        allow_blank=False,
+        max_length=150
     )
     password = serializers.CharField(
         write_only=True,
-        help_text="Mot de passe"
+        help_text="Mot de passe",
+        required=True,
+        allow_blank=False,
+        style={'input_type': 'password'}
     )
     
     def validate(self, attrs):

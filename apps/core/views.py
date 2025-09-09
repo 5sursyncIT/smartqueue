@@ -15,6 +15,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from .serializers import PhoneValidationSerializer
 
 
 def home_view(request):
@@ -211,12 +212,17 @@ class PublicConfigView(APIView):
 class ValidatePhoneView(APIView):
     """
     Utilitaire pour valider numéros de téléphone sénégalais
+    Accessible à tous les utilisateurs authentifiés
     """
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
         """Valider un numéro de téléphone"""
-        phone = request.data.get('phone')
+        serializer = PhoneValidationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        phone = serializer.validated_data['phone']
         
         if not phone:
             return Response(
@@ -243,6 +249,7 @@ class ValidatePhoneView(APIView):
 class SenegalRegionsView(APIView):
     """
     Liste des régions du Sénégal
+    Accessible à tous les utilisateurs authentifiés
     """
     permission_classes = [IsAuthenticated]
     

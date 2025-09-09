@@ -3,17 +3,25 @@ venv/
 .venv/
 
 # --- Cache Python
-_pycache_/
+__pycache__/
 *.py[cod]
+*.pyc
 
 # --- Base de données locale
 db.sqlite3
+db.sqlite3.*
+
+# --- Dossier tests (ne pas committer les scripts de test)
+tests/
+test_*.py
+test_results_*.json
 
 # --- Paramètres privés
 .env
 .env.*
 
-# --- Dossiers générés automatiquement
+# --- Logs et fichiers générés automatiquement
+logs/
 *.log
 *.pot
 *.pyc

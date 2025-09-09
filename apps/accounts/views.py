@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResponse
 from django.contrib.auth import login
 from django.utils import timezone
 from datetime import timedelta
@@ -28,7 +28,12 @@ from .serializers import (
 @extend_schema(
     summary="Inscription d'un nouvel utilisateur",
     description="Créer un nouveau compte SmartQueue avec validation sénégalaise",
-    tags=["Authentication"]
+    tags=["Authentication"],
+    request=UserRegistrationSerializer,
+    responses={
+        201: OpenApiResponse(description="Inscription réussie avec tokens JWT"),
+        400: OpenApiResponse(description="Erreurs de validation")
+    }
 )
 class UserRegistrationView(APIView):
     """
@@ -73,7 +78,12 @@ class UserRegistrationView(APIView):
 @extend_schema(
     summary="Connexion utilisateur",
     description="Connexion par numéro de téléphone ou email",
-    tags=["Authentication"]
+    tags=["Authentication"],
+    request=UserLoginSerializer,
+    responses={
+        200: OpenApiResponse(description="Connexion réussie avec tokens JWT"),
+        400: OpenApiResponse(description="Erreurs de validation")
+    }
 )
 class UserLoginView(APIView):
     """
@@ -187,7 +197,12 @@ class UserProfileView(RetrieveUpdateAPIView):
 @extend_schema(
     summary="Changer le mot de passe",
     description="Changer son mot de passe en fournissant l'ancien",
-    tags=["Profile"]
+    tags=["Profile"],
+    request=ChangePasswordSerializer,
+    responses={
+        200: OpenApiResponse(description="Mot de passe changé avec succès"),
+        400: OpenApiResponse(description="Erreurs de validation")
+    }
 )
 class ChangePasswordView(APIView):
     """
@@ -220,7 +235,12 @@ class ChangePasswordView(APIView):
 @extend_schema(
     summary="Vérifier le numéro de téléphone",
     description="Vérifier le numéro avec un code SMS",
-    tags=["Verification"]
+    tags=["Verification"],
+    request=PhoneVerificationSerializer,
+    responses={
+        200: OpenApiResponse(description="Téléphone vérifié avec succès"),
+        400: OpenApiResponse(description="Code invalide ou expiré")
+    }
 )
 class PhoneVerificationView(APIView):
     """
@@ -267,7 +287,11 @@ class PhoneVerificationView(APIView):
 @extend_schema(
     summary="Envoyer un code de vérification SMS",
     description="Envoyer un nouveau code de vérification par SMS",
-    tags=["Verification"]
+    tags=["Verification"],
+    responses={
+        200: OpenApiResponse(description="Code SMS envoyé avec succès"),
+        400: OpenApiResponse(description="Erreur d'envoi")
+    }
 )
 class SendVerificationCodeView(APIView):
     """
@@ -300,7 +324,12 @@ class SendVerificationCodeView(APIView):
 @extend_schema(
     summary="Demander une réinitialisation de mot de passe",
     description="Envoyer un code SMS pour réinitialiser le mot de passe",
-    tags=["Password Reset"]
+    tags=["Password Reset"],
+    request=RequestPasswordResetSerializer,
+    responses={
+        200: OpenApiResponse(description="Code de reset envoyé par SMS"),
+        400: OpenApiResponse(description="Email non trouvé")
+    }
 )
 class RequestPasswordResetView(APIView):
     """
@@ -341,7 +370,12 @@ class RequestPasswordResetView(APIView):
 @extend_schema(
     summary="Réinitialiser le mot de passe",
     description="Réinitialiser le mot de passe avec un code SMS",
-    tags=["Password Reset"]
+    tags=["Password Reset"],
+    request=PasswordResetSerializer,
+    responses={
+        200: OpenApiResponse(description="Mot de passe réinitialisé avec succès"),
+        400: OpenApiResponse(description="Code invalide ou expiré")
+    }
 )
 class PasswordResetView(APIView):
     """
