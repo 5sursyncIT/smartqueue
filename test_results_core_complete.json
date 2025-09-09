@@ -1,0 +1,73 @@
+[
+  {
+    "test": "Health Check",
+    "success": true,
+    "status_code": 200,
+    "message": "Health check OK",
+    "timestamp": "2025-09-09T12:03:21.383747",
+    "response_data": {
+      "status": "healthy",
+      "checks": {
+        "database": "ok",
+        "cache": "ok",
+        "maintenance": "inactive"
+      }
+    }
+  },
+  {
+    "test": "System Status",
+    "success": false,
+    "status_code": 0,
+    "message": "Échec récupération status",
+    "timestamp": "2025-09-09T12:03:21.891669",
+    "response_data": null
+  },
+  {
+    "test": "Public Config",
+    "success": true,
+    "status_code": 200,
+    "message": "Configuration récupérée",
+    "timestamp": "2025-09-09T12:03:22.449890",
+    "response_data": {
+      "site_name": "SmartQueue Sénégal",
+      "maintenance_mode": false
+    }
+  },
+  {
+    "test": "Validate Phone",
+    "success": true,
+    "status_code": 200,
+    "message": "Numéro validé",
+    "timestamp": "2025-09-09T12:03:22.859463",
+    "response_data": {
+      "original": "+221771234567",
+      "is_valid": true
+    }
+  },
+  {
+    "test": "Senegal Regions",
+    "success": true,
+    "status_code": 200,
+    "message": "Régions récupérées",
+    "timestamp": "2025-09-09T12:03:23.206237",
+    "response_data": {
+      "count": 14
+    }
+  },
+  {
+    "test": "Activity Logs",
+    "success": false,
+    "status_code": 0,
+    "message": "Échec récupération logs",
+    "timestamp": "2025-09-09T12:03:23.609837",
+    "response_data": null
+  },
+  {
+    "test": "Maintenance Status",
+    "success": false,
+    "status_code": 0,
+    "message": "Échec récupération maintenance",
+    "timestamp": "2025-09-09T12:03:24.061537",
+    "response_data": null
+  }
+]

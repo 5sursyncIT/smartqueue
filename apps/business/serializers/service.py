@@ -25,25 +25,28 @@ class ServiceCategorySerializer(serializers.ModelSerializer):
 
 class ServiceCreateSerializer(serializers.ModelSerializer):
     """
-    Serializer SIMPLE pour la CRÉATION de services
-    SEULEMENT les champs essentiels
+    Serializer MINIMAL pour la CRÉATION de services - RETOURNE L'ID
     """
     
-    def create(self, validated_data):
-        # Fournir valeurs par défaut pour champs manquants
-        validated_data.setdefault('required_documents', [])
-        validated_data.setdefault('optional_documents', [])
-        validated_data.setdefault('service_hours', {})
-        validated_data.setdefault('notifications_config', {})
-        return super().create(validated_data)
+    def to_representation(self, instance):
+        print(f"🔍 DEBUG SERIALIZER: to_representation appelé avec instance.id={instance.id}")
+        data = super().to_representation(instance)
+        print(f"🔍 DEBUG SERIALIZER: data avant retour={data}")
+        return data
     
     class Meta:
         model = Service
-        fields = [
-            'organization', 'name', 'code', 'description', 
-            'estimated_duration', 'cost', 'default_priority', 'status',
-            'is_public', 'allows_appointments', 'requires_appointment'
-        ]
+        fields = ['id', 'name', 'code', 'organization']  # Champs essentiels + code obligatoire
+
+
+class ServiceSimpleListSerializer(serializers.ModelSerializer):
+    """
+    Serializer ULTRA SIMPLE pour debug - JUSTE ID et nom
+    """
+    
+    class Meta:
+        model = Service
+        fields = ['id', 'name']
 
 class ServiceListSerializer(serializers.ModelSerializer):
     """
@@ -180,103 +183,6 @@ class ServiceDetailSerializer(ServiceListSerializer):
         return None
 
 
-class ServiceCreateSerializer(serializers.ModelSerializer):
-    """
-    Serializer pour CRÉER un nouveau service
-    
-    Usage : POST /api/services/
-    Validation stricte + champs obligatoires
-    """
-    
-    # Validation personnalisée pour le code
-    code = serializers.CharField(
-        max_length=20,
-        help_text="Code unique du service (ex: OUVCPT, CONSGEN)"
-    )
-    
-    class Meta:
-        model = Service
-        fields = [
-            # Champs obligatoires pour création
-            'organization', 'name', 'code', 'description',
-            'estimated_duration', 'default_priority',
-            
-            # Champs optionnels
-            'category', 'instructions', 'max_wait_time', 'cost',
-            'allows_appointments', 'requires_appointment',
-            'min_appointment_notice', 'max_appointment_advance',
-            'required_documents', 'optional_documents',
-            'service_hours', 'sms_notifications', 'push_notifications',
-            'sms_template', 'is_public', 'requires_authentication',
-            'display_order'
-        ]
-    
-    def validate_code(self, value):
-        """
-        Validation personnalisée du code service
-        """
-        # Convertir en majuscules et supprimer espaces
-        value = value.upper().strip()
-        
-        if len(value) < 3:
-            raise serializers.ValidationError(
-                "Le code doit contenir au moins 3 caractères."
-            )
-        
-        # Vérifier que le code contient seulement lettres et chiffres
-        if not value.replace('_', '').isalnum():
-            raise serializers.ValidationError(
-                "Le code ne peut contenir que des lettres, chiffres et underscores."
-            )
-        
-        return value
-    
-    def validate_estimated_duration(self, value):
-        """
-        Validation de la durée estimée
-        """
-        if value < 1:
-            raise serializers.ValidationError(
-                "La durée estimée doit être d'au moins 1 minute."
-            )
-        if value > 180:
-            raise serializers.ValidationError(
-                "La durée estimée ne peut pas dépasser 3 heures (180 minutes)."
-            )
-        return value
-    
-    def validate(self, attrs):
-        """
-        Validation globale (plusieurs champs ensemble)
-        """
-        organization = attrs.get('organization')
-        code = attrs.get('code', '').upper()
-        
-        # Vérifier unicité du code dans l'organisation
-        if Service.objects.filter(
-            organization=organization, 
-            code=code
-        ).exists():
-            raise serializers.ValidationError({
-                'code': f"Le code '{code}' existe déjà dans cette organisation."
-            })
-        
-        # Vérifier cohérence RDV
-        if attrs.get('requires_appointment') and not attrs.get('allows_appointments'):
-            raise serializers.ValidationError({
-                'requires_appointment': 'Un service ne peut pas obliger les RDV sans les autoriser.'
-            })
-        
-        # Vérifier cohérence délais RDV
-        min_notice = attrs.get('min_appointment_notice', 0)
-        max_advance = attrs.get('max_appointment_advance', 0)
-        
-        if min_notice > max_advance * 24:  # Convertir jours en heures
-            raise serializers.ValidationError({
-                'min_appointment_notice': 'Le délai minimum ne peut pas être supérieur au délai maximum.'
-            })
-        
-        return attrs
 
 
 class ServiceUpdateSerializer(serializers.ModelSerializer):

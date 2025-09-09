@@ -13,7 +13,7 @@ urlpatterns = [
     # ============================================
     # QUEUES (FILES D'ATTENTE)
     # ============================================
-    path('queues/', views.QueueListCreateView.as_view(), name='queue-list-create'),
+    path('queues/', views.queue_list_create_view, name='queue-list-create'),
     path('queues/<int:pk>/', views.QueueDetailView.as_view(), name='queue-detail'),
     
     # Tickets d'une file spécifique

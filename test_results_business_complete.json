@@ -1,0 +1,125 @@
+[
+  {
+    "test": "Create Organization",
+    "success": true,
+    "status_code": 201,
+    "message": "Organisation créée",
+    "timestamp": "2025-09-09T11:18:02.825403",
+    "response_data": {
+      "id": 20,
+      "name": "Banque Test API 20250909_111757"
+    }
+  },
+  {
+    "test": "List Organizations",
+    "success": true,
+    "status_code": 200,
+    "message": "Liste récupérée",
+    "timestamp": "2025-09-09T11:18:03.308829",
+    "response_data": {
+      "count": 8
+    }
+  },
+  {
+    "test": "Get Organization",
+    "success": true,
+    "status_code": 200,
+    "message": "Détail récupéré",
+    "timestamp": "2025-09-09T11:18:03.729292",
+    "response_data": {
+      "name": "Banque Test API 20250909_111757"
+    }
+  },
+  {
+    "test": "Update Organization",
+    "success": true,
+    "status_code": 200,
+    "message": "Organisation modifiée",
+    "timestamp": "2025-09-09T11:18:04.194021",
+    "response_data": {
+      "trade_name": "BCT API Modifiée"
+    }
+  },
+  {
+    "test": "Create Service",
+    "success": true,
+    "status_code": 201,
+    "message": "Service créé",
+    "timestamp": "2025-09-09T11:18:05.056775",
+    "response_data": {
+      "id": 31,
+      "name": "Service Test 20250909_111757"
+    }
+  },
+  {
+    "test": "List Services",
+    "success": true,
+    "status_code": 200,
+    "message": "Liste services récupérée",
+    "timestamp": "2025-09-09T11:18:05.502263",
+    "response_data": {
+      "count": 21
+    }
+  },
+  {
+    "test": "Get Service",
+    "success": true,
+    "status_code": 200,
+    "message": "Détail service récupéré",
+    "timestamp": "2025-09-09T11:18:05.901105",
+    "response_data": {
+      "name": "Service Test 20250909_111757"
+    }
+  },
+  {
+    "test": "Update Service",
+    "success": true,
+    "status_code": 200,
+    "message": "Service modifié",
+    "timestamp": "2025-09-09T11:18:07.323121",
+    "response_data": {
+      "name": "Service Test Complet Modifié"
+    }
+  },
+  {
+    "test": "Organization Services",
+    "success": true,
+    "status_code": 200,
+    "message": "Services organisation récupérés",
+    "timestamp": "2025-09-09T11:18:07.706966",
+    "response_data": {
+      "count": 1
+    }
+  },
+  {
+    "test": "Business Stats",
+    "success": true,
+    "status_code": 200,
+    "message": "Statistiques récupérées",
+    "timestamp": "2025-09-09T11:18:08.072694",
+    "response_data": {
+      "organizations": null,
+      "services": null
+    }
+  },
+  {
+    "test": "Delete Service",
+    "success": true,
+    "status_code": 204,
+    "message": "Service supprimé",
+    "timestamp": "2025-09-09T11:18:08.464062",
+    "response_data": {
+      "deleted_id": 31
+    }
+  },
+  {
+    "test": "Delete Organization",
+    "success": true,
+    "status_code": 204,
+    "message": "Organisation supprimée",
+    "timestamp": "2025-09-09T11:18:08.836471",
+    "response_data": {
+      "deleted_id": 20
+    }
+  }
+]

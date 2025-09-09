@@ -13,7 +13,7 @@ urlpatterns = [
     # ============================================
     # ORGANIZATIONS
     # ============================================
-    path('organizations/', views.OrganizationListCreateView.as_view(), name='organization-list-create'),
+    path('organizations/', views.organization_list_create_view, name='organization-list-create'),
     path('organizations/<int:pk>/', views.OrganizationDetailView.as_view(), name='organization-detail'),
     
     # Services d'une organisation
@@ -22,7 +22,7 @@ urlpatterns = [
     # ============================================
     # SERVICES 
     # ============================================
-    path('services/', views.ServiceListCreateView.as_view(), name='service-list-create'),
+    path('services/', views.service_list_create_view, name='service-list-create'),
     path('services/<int:pk>/', views.ServiceDetailView.as_view(), name='service-detail'),
     
     # ============================================

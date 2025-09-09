@@ -15,7 +15,7 @@ class QueueCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Queue
         fields = [
-            'organization', 'service', 'name', 'queue_type', 'current_status'
+            'organization', 'service', 'name', 'queue_type', 'current_status', 'description', 'max_capacity'
         ]
 
 class QueueListSerializer(serializers.ModelSerializer):
@@ -182,7 +182,7 @@ class QueueDetailSerializer(QueueListSerializer):
         return [
             {
                 'id': ticket.id,
-                'number': ticket.number,
+                'number': ticket.ticket_number,
                 'created_at': ticket.created_at,
                 'priority': ticket.priority
             }
@@ -190,87 +190,6 @@ class QueueDetailSerializer(QueueListSerializer):
         ]
 
 
-class QueueCreateSerializer(serializers.ModelSerializer):
-    """
-    Serializer pour CRÉER une nouvelle file d'attente
-    
-    Usage : POST /api/queues/
-    Validation stricte + champs obligatoires
-    """
-    
-    class Meta:
-        model = Queue
-        fields = [
-            # Champs obligatoires pour création
-            'service', 'organization', 'name', 'queue_type',
-            
-            # Champs optionnels
-            'description', 'processing_strategy', 'max_capacity',
-            'max_wait_time', 'ticket_expiry_time', 'opening_hours',
-            'notifications_enabled', 'notify_before_turns'
-        ]
-    
-    def validate_name(self, value):
-        """
-        Validation personnalisée du nom
-        """
-        if len(value.strip()) < 3:
-            raise serializers.ValidationError(
-                "Le nom doit contenir au moins 3 caractères."
-            )
-        return value.strip()
-    
-    def validate_max_capacity(self, value):
-        """
-        Validation de la capacité maximum
-        """
-        if value < 0:
-            raise serializers.ValidationError(
-                "La capacité ne peut pas être négative."
-            )
-        if value > 1000:
-            raise serializers.ValidationError(
-                "La capacité ne peut pas dépasser 1000 tickets."
-            )
-        return value
-    
-    def validate(self, attrs):
-        """
-        Validation globale (plusieurs champs ensemble)
-        """
-        service = attrs.get('service')
-        organization = attrs.get('organization')
-        queue_type = attrs.get('queue_type')
-        
-        # Vérifier que le service appartient à l'organisation
-        if service and organization and service.organization != organization:
-            raise serializers.ValidationError({
-                'service': 'Le service sélectionné n\'appartient pas à cette organisation.'
-            })
-        
-        # Vérifier unicité : une seule file par type pour un service
-        if Queue.objects.filter(
-            service=service,
-            organization=organization,
-            queue_type=queue_type
-        ).exists():
-            raise serializers.ValidationError({
-                'queue_type': f'Une file de type "{queue_type}" existe déjà pour ce service.'
-            })
-        
-        return attrs
-    
-    def create(self, validated_data):
-        """
-        Logique de création personnalisée
-        """
-        # Générer un nom automatique si pas fourni
-        if not validated_data.get('name'):
-            service = validated_data['service']
-            queue_type = validated_data['queue_type']
-            validated_data['name'] = f"{service.name} - {queue_type.title()}"
-        
-        return super().create(validated_data)
 
 
 class QueueUpdateSerializer(serializers.ModelSerializer):

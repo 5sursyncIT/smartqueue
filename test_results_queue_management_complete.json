@@ -1,0 +1,93 @@
+[
+  {
+    "test": "Create Queue",
+    "success": true,
+    "status_code": 201,
+    "message": "File créée",
+    "timestamp": "2025-09-09T11:58:00.412938",
+    "response_data": {
+      "id": 5,
+      "name": "File Test 20250909_115751"
+    }
+  },
+  {
+    "test": "List Queues",
+    "success": true,
+    "status_code": 200,
+    "message": "Liste récupérée",
+    "timestamp": "2025-09-09T11:58:00.954481",
+    "response_data": {
+      "count": 5
+    }
+  },
+  {
+    "test": "Get Queue",
+    "success": true,
+    "status_code": 200,
+    "message": "Détail récupéré",
+    "timestamp": "2025-09-09T11:58:02.188210",
+    "response_data": {
+      "name": "File Test 20250909_115751"
+    }
+  },
+  {
+    "test": "Update Queue",
+    "success": true,
+    "status_code": 200,
+    "message": "File modifiée",
+    "timestamp": "2025-09-09T11:58:02.697270",
+    "response_data": {
+      "name": "File Test Modifiée"
+    }
+  },
+  {
+    "test": "Take Ticket",
+    "success": true,
+    "status_code": 200,
+    "message": "Ticket pris",
+    "timestamp": "2025-09-09T11:58:03.461676",
+    "response_data": {
+      "ticket_id": 3
+    }
+  },
+  {
+    "test": "List Tickets",
+    "success": true,
+    "status_code": 200,
+    "message": "Liste tickets récupérée",
+    "timestamp": "2025-09-09T11:58:03.923455",
+    "response_data": {
+      "count": 2
+    }
+  },
+  {
+    "test": "Get Ticket",
+    "success": true,
+    "status_code": 200,
+    "message": "Détail ticket récupéré",
+    "timestamp": "2025-09-09T11:58:04.479055",
+    "response_data": {
+      "ticket_number": "Q001"
+    }
+  },
+  {
+    "test": "Queue Tickets",
+    "success": true,
+    "status_code": 200,
+    "message": "Tickets file récupérés",
+    "timestamp": "2025-09-09T11:58:05.032049",
+    "response_data": {
+      "count": 1
+    }
+  },
+  {
+    "test": "Queue Management Stats",
+    "success": true,
+    "status_code": 200,
+    "message": "Statistiques récupérées",
+    "timestamp": "2025-09-09T11:58:05.405966",
+    "response_data": {
+      "total_queues": 5
+    }
+  }
+]

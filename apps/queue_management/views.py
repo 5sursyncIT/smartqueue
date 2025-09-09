@@ -22,26 +22,48 @@ from .serializers import (
 # VUES QUEUES (FILES D'ATTENTE)
 # ============================================
 
-class QueueListCreateView(generics.ListCreateAPIView):
-    """Liste et création de files d'attente"""
-    queryset = Queue.objects.filter(is_active=True)
+@api_view(['GET', 'POST'])
+def queue_list_create_view(request):
+    """Liste et création de files d'attente - Custom view pour contrôle ID"""
+    if request.method == 'POST':
+        serializer = QueueCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            queue = serializer.save()
+            response_data = {
+                'id': queue.id,
+                'name': queue.name,
+                'queue_type': queue.queue_type,
+                'current_status': queue.current_status
+            }
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return QueueCreateSerializer
-        return QueueListSerializer
-    permission_classes = [permissions.AllowAny]  # TEMPORAIRE pour tests
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['organization', 'service', 'queue_type', 'current_status']
-    search_fields = ['name', 'description']
-    ordering_fields = ['created_at', 'name']
-    ordering = ['-created_at']
+    # GET - Liste des files
+    queues = Queue.objects.filter(is_active=True)
+    
+    # Filtrage basique par paramètres GET
+    organization = request.GET.get('organization')
+    service = request.GET.get('service')
+    queue_type = request.GET.get('queue_type')
+    current_status = request.GET.get('current_status')
+    
+    if organization:
+        queues = queues.filter(organization=organization)
+    if service:
+        queues = queues.filter(service=service) 
+    if queue_type:
+        queues = queues.filter(queue_type=queue_type)
+    if current_status:
+        queues = queues.filter(current_status=current_status)
+        
+    serializer = QueueListSerializer(queues, many=True)
+    return Response(serializer.data)
 
 class QueueDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Détail, modification et suppression de file d'attente"""
     queryset = Queue.objects.filter(is_active=True)
     serializer_class = QueueDetailSerializer
-    permission_classes = [permissions.AllowAny]  # TEMPORAIRE pour tests
+    permission_classes = [permissions.IsAuthenticated]
 
 # ============================================
 # VUES TICKETS
@@ -55,7 +77,7 @@ class TicketListCreateView(generics.ListCreateAPIView):
         if self.request.method == 'POST':
             return TicketCreateSerializer
         return TicketListSerializer
-    permission_classes = [permissions.AllowAny]  # TEMPORAIRE pour tests
+    permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['queue', 'customer', 'status', 'priority']
     search_fields = ['ticket_number', 'customer__first_name', 'customer__last_name']
@@ -66,7 +88,7 @@ class TicketDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Détail, modification et suppression de ticket"""
     queryset = Ticket.objects.all()
     serializer_class = TicketDetailSerializer
-    permission_classes = [permissions.AllowAny]  # TEMPORAIRE pour tests
+    permission_classes = [permissions.IsAuthenticated]
 
 # ============================================
 # VUES RELATIONS (Queue -> Tickets)
@@ -75,7 +97,7 @@ class TicketDetailView(generics.RetrieveUpdateDestroyAPIView):
 class QueueTicketsView(generics.ListAPIView):
     """Tickets d'une file d'attente spécifique"""
     serializer_class = TicketListSerializer
-    permission_classes = [permissions.AllowAny]  # TEMPORAIRE pour tests
+    permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
         queue_id = self.kwargs['queue_id']
@@ -144,12 +166,12 @@ def queue_with_travel_time(request, queue_id):
 def take_ticket(request, queue_id):
     """Prendre un ticket dans une file - avec géolocalisation intelligente"""
     try:
-        queue = Queue.objects.get(id=queue_id, is_active=True, status='active')
+        queue = Queue.objects.get(id=queue_id, is_active=True, current_status='active')
         user = request.user
         
         # Vérifier si utilisateur peut prendre un ticket
         existing_ticket = Ticket.objects.filter(
-            user=user,
+            customer=user,
             queue=queue,
             status__in=['waiting', 'called', 'serving']
         ).first()
@@ -162,10 +184,11 @@ def take_ticket(request, queue_id):
         
         # Créer le ticket
         ticket = Ticket.objects.create(
-            user=user,
+            customer=user,
             queue=queue,
+            service=queue.service,
             creation_channel=request.data.get('channel', 'web'),
-            priority_level=request.data.get('priority', 'low')
+            priority=request.data.get('priority', 'low')
         )
         
         # Déclencher géolocalisation intelligente si disponible
@@ -227,7 +250,7 @@ def queue_management_stats(request):
     """Statistiques générales queue management"""
     stats = {
         'total_queues': Queue.objects.filter(is_active=True).count(),
-        'active_queues': Queue.objects.filter(status='active').count(),
+        'active_queues': Queue.objects.filter(current_status='active').count(),
         'total_tickets_today': Ticket.objects.filter(
             created_at__date=timezone.now().date()
         ).count(),
