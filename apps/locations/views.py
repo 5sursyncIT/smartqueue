@@ -153,13 +153,20 @@ class CalculateTravelTimeView(APIView):
                     )
                 
                 # Vérifier organisation
-                from apps.organizations.models import Organization
+                from apps.business.models import Organization
                 try:
                     organization = Organization.objects.get(id=organization_id)
                 except Organization.DoesNotExist:
                     return Response(
                         {'error': 'Organisation non trouvée'},
                         status=status.HTTP_404_NOT_FOUND
+                    )
+                
+                # Vérifier que l'organisation a des coordonnées
+                if not organization.latitude or not organization.longitude:
+                    return Response(
+                        {'error': 'Organisation sans coordonnées GPS'},
+                        status=status.HTTP_400_BAD_REQUEST
                     )
                 
                 # Calculer temps de trajet
@@ -271,12 +278,16 @@ class NearbyOrganizationsView(APIView):
                 )
             
             # Organisations proches
-            from apps.organizations.models import Organization
-            from apps.organizations.serializers import OrganizationSerializer
+            from apps.business.models import Organization
+            from apps.business.serializers import OrganizationListSerializer
             
             nearby_organizations = []
             
             for org in Organization.objects.filter(is_active=True):
+                # Vérifier que l'organisation a des coordonnées
+                if not org.latitude or not org.longitude:
+                    continue
+                    
                 distance = user_location.calculate_distance_to_commune(org)
                 
                 if distance and distance <= radius_km:
@@ -292,7 +303,7 @@ class NearbyOrganizationsView(APIView):
                         )
                         
                         nearby_organizations.append({
-                            'organization': OrganizationSerializer(org).data,
+                            'organization': OrganizationListSerializer(org).data,
                             'distance_km': round(distance, 2),
                             'travel_time_minutes': travel_data['estimated_travel_minutes'],
                             'confidence': travel_data['confidence_score']
@@ -301,7 +312,7 @@ class NearbyOrganizationsView(APIView):
                     except Exception:
                         # Fallback si calcul échoue
                         nearby_organizations.append({
-                            'organization': OrganizationSerializer(org).data,
+                            'organization': OrganizationListSerializer(org).data,
                             'distance_km': round(distance, 2),
                             'travel_time_minutes': int(distance * 2),  # Estimation simple
                             'confidence': 50
@@ -332,7 +343,7 @@ class NearbyOrganizationsView(APIView):
 def trigger_queue_reorganization(request, queue_id):
     """Déclencher manuellement réorganisation de file"""
     try:
-        from apps.queues.models import Queue
+        from apps.queue_management.models import Queue
         
         queue = Queue.objects.get(id=queue_id)
         

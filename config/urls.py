@@ -20,12 +20,12 @@ urlpatterns = [
     path('api/business/', include('apps.business.urls')),      # APIs business (orgs + services unifiés) ✅
     path('api/queue-management/', include('apps.queue_management.urls')),  # APIs files + tickets unifiés ✅
     path('api/accounts/', include('apps.accounts.urls')),          # APIs d'authentification
-    # À réactiver après correction des dépendances (prochaine étape)
-    # path('api/locations/', include('apps.locations.urls')),    # APIs géolocalisation intelligente
-    # path('api/appointments/', include('apps.appointments.urls')),   # APIs de rendez-vous
+    # APIs géolocalisation intelligente activées ✅
+    path('api/locations/', include('apps.locations.urls')),    # APIs géolocalisation intelligente
+    path('api/appointments/', include('apps.appointments.urls')),   # APIs de rendez-vous
     path('api/notifications/', include('apps.notifications.urls')), # APIs de notifications  
-    # path('api/payments/', include('apps.payments.urls')),      # APIs de paiements
-    # path('api/analytics/', include('apps.analytics.urls')),    # APIs d'analytics
+    path('api/payments/', include('apps.payments.urls')),      # APIs de paiements ✅
+    path('api/analytics/', include('apps.analytics.urls')),    # APIs d'analytics
     
     # Documentation API automatique (Swagger)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

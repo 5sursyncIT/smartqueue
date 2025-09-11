@@ -53,8 +53,8 @@ THIRD_PARTY_APPS = [
     # CORS pour React
     'corsheaders',                 # Permet à React de communiquer avec Django
     
-    # Temps réel (désactivé pour test)
-    # 'channels',                    # WebSockets pour notifications instantanées
+    # Temps réel (ACTIVÉ maintenant !)
+    'channels',                    # WebSockets pour notifications instantanées
     
     # Tâches asynchrones (désactivé pour test)
     # 'django_celery_beat',          # Tâches programmées
@@ -74,12 +74,12 @@ LOCAL_APPS = [
     'apps.accounts',          # Utilisateurs et authentification  
     'apps.business',          # Organizations + Services unifiés ✅
     'apps.queue_management',  # Queues + Tickets unifiés ✅
-    # À réactiver après correction des dépendances (prochaine étape)
-    # 'apps.locations',         # Géolocalisation intelligente
-    # 'apps.appointments',      # Système de rendez-vous
+    # Géolocalisation intelligente activée ✅
+    'apps.locations',         # Géolocalisation intelligente
+    'apps.appointments',      # Système de rendez-vous
     'apps.notifications',     # SMS, Push, Email
-    # 'apps.payments',         # Orange Money, Wave, Free Money
-    # 'apps.analytics',        # Statistiques et rapports
+    'apps.payments',         # Orange Money, Wave, Free Money ✅
+    'apps.analytics',        # Statistiques et rapports
     
     # === ANCIENNES APPS (REMPLACÉES) ===
     # 'apps.organizations',  # REMPLACÉE par apps.business
@@ -314,11 +314,17 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],  # Redis local
-        },
+        # Mode développement sans Redis serveur
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
+    
+    # Configuration Redis pour production (prête mais désactivée)
+    # 'default': {
+    #     'BACKEND': 'channels_redis.core.RedisChannelLayer',
+    #     'CONFIG': {
+    #         "hosts": [('127.0.0.1', 6379)],
+    #     },
+    # },
 }
 
 # ==============================================

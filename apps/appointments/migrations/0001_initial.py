@@ -60,8 +60,8 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=True, verbose_name='Actif')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='appointment_slots', to='organizations.organization', verbose_name='Organisation')),
-                ('service', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='appointment_slots', to='services.service', verbose_name='Service')),
+                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='appointment_slots', to='business.organization', verbose_name='Organisation')),
+                ('service', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='appointment_slots', to='business.service', verbose_name='Service')),
             ],
             options={
                 'verbose_name': 'Créneau de RDV',
@@ -106,12 +106,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='appointment',
             name='organization',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='appointments', to='organizations.organization', verbose_name='Organisation'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='appointments', to='business.organization', verbose_name='Organisation'),
         ),
         migrations.AddField(
             model_name='appointment',
             name='service',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='appointments', to='services.service', verbose_name='Service'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='appointments', to='business.service', verbose_name='Service'),
         ),
         migrations.AddIndex(
             model_name='appointment',

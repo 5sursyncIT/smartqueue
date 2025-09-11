@@ -19,6 +19,10 @@ from .models import (
     OrganizationMetrics, ServiceMetrics, QueueMetrics, 
     CustomerSatisfaction, DashboardWidget
 )
+from .serializers import (
+    OrganizationMetricsSerializer, ServiceMetricsSerializer, 
+    QueueMetricsSerializer, CustomerSatisfactionSerializer
+)
 from apps.business.models import Organization, Service
 from apps.queue_management.models import Queue, Ticket
 from apps.appointments.models import Appointment
@@ -41,6 +45,7 @@ class OrganizationMetricsViewSet(ReadOnlyModelViewSet):
     Lecture seule - les métriques sont calculées automatiquement
     """
     queryset = OrganizationMetrics.objects.all()
+    serializer_class = OrganizationMetricsSerializer
     permission_classes = [permissions.IsAuthenticated]
     filterset_fields = ['organization', 'date']
     ordering = ['-date']
@@ -78,6 +83,7 @@ class ServiceMetricsViewSet(ReadOnlyModelViewSet):
     ViewSet pour les métriques de services
     """
     queryset = ServiceMetrics.objects.all()
+    serializer_class = ServiceMetricsSerializer
     permission_classes = [permissions.IsAuthenticated]
     filterset_fields = ['service', 'organization', 'date']
     ordering = ['-date']
@@ -112,6 +118,7 @@ class QueueMetricsViewSet(ReadOnlyModelViewSet):
     ViewSet pour les métriques de files d'attente
     """
     queryset = QueueMetrics.objects.all()
+    serializer_class = QueueMetricsSerializer
     permission_classes = [permissions.IsAuthenticated]
     filterset_fields = ['queue', 'queue_status', 'timestamp']
     ordering = ['-timestamp']
@@ -151,6 +158,7 @@ class CustomerSatisfactionViewSet(ModelViewSet):
     ViewSet pour les évaluations de satisfaction
     """
     queryset = CustomerSatisfaction.objects.all()
+    serializer_class = CustomerSatisfactionSerializer
     permission_classes = [permissions.IsAuthenticated]
     filterset_fields = ['organization', 'service', 'rating']
     ordering = ['-created_at']

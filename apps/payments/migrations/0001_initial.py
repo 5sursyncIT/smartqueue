@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('appointment', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='payments', to='appointments.appointment', verbose_name='RDV lié')),
                 ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payments', to=settings.AUTH_USER_MODEL, verbose_name='Client')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='organizations.organization', verbose_name='Organisation')),
+                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='business.organization', verbose_name='Organisation')),
             ],
             options={
                 'verbose_name': 'Paiement',
@@ -133,7 +133,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='payment',
             name='ticket',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='payments', to='tickets.ticket', verbose_name='Ticket lié'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='payments', to='queue_management.ticket', verbose_name='Ticket lié'),
         ),
         migrations.CreateModel(
             name='PaymentMethod',

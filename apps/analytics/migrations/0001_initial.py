@@ -59,8 +59,8 @@ class Migration(migrations.Migration):
                 ('total_rating_score', models.PositiveIntegerField(default=0)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='service_metrics', to='organizations.organization', verbose_name='Organisation')),
-                ('service', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='metrics', to='services.service', verbose_name='Service')),
+                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='service_metrics', to='business.organization', verbose_name='Organisation')),
+                ('service', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='metrics', to='business.service', verbose_name='Service')),
             ],
             options={
                 'verbose_name': 'Métriques service',
@@ -80,7 +80,7 @@ class Migration(migrations.Migration):
                 ('tickets_served_hour', models.PositiveIntegerField(default=0, verbose_name='Tickets servis cette heure')),
                 ('queue_status', models.CharField(max_length=20, verbose_name='Statut de la file')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('queue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='metrics', to='queues.queue', verbose_name="File d'attente")),
+                ('queue', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='metrics', to='queue_management.queue', verbose_name="File d'attente")),
             ],
             options={
                 'verbose_name': 'Métriques file',
@@ -115,7 +115,7 @@ class Migration(migrations.Migration):
                 ('total_revenue', models.DecimalField(decimal_places=2, default=Decimal('0.00'), max_digits=12, verbose_name='Revenus totaux (CFA)')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='metrics', to='organizations.organization', verbose_name='Organisation')),
+                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='metrics', to='business.organization', verbose_name='Organisation')),
             ],
             options={
                 'verbose_name': 'Métriques organisation',
@@ -138,9 +138,9 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('appointment', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ratings', to='appointments.appointment', verbose_name='Rendez-vous')),
                 ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='satisfaction_ratings', to=settings.AUTH_USER_MODEL, verbose_name='Client')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='satisfaction_ratings', to='organizations.organization', verbose_name='Organisation')),
-                ('service', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='satisfaction_ratings', to='services.service', verbose_name='Service')),
-                ('ticket', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ratings', to='tickets.ticket', verbose_name='Ticket')),
+                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='satisfaction_ratings', to='business.organization', verbose_name='Organisation')),
+                ('service', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='satisfaction_ratings', to='business.service', verbose_name='Service')),
+                ('ticket', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ratings', to='queue_management.ticket', verbose_name='Ticket')),
             ],
             options={
                 'verbose_name': 'Satisfaction client',

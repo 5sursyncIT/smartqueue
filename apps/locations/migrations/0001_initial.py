@@ -118,7 +118,7 @@ class Migration(migrations.Migration):
                 ('deactivated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_deactivated', to=settings.AUTH_USER_MODEL, verbose_name='Désactivé par')),
                 ('destination_commune', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='travels_to', to='locations.commune', verbose_name='Commune destination')),
                 ('modified_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_modified', to=settings.AUTH_USER_MODEL, verbose_name='Modifié par')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='organizations.organization', verbose_name='Organisation')),
+                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='business.organization', verbose_name='Organisation')),
                 ('origin_commune', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='travels_from', to='locations.commune', verbose_name='Commune départ')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Utilisateur')),
             ],
