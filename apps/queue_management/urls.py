@@ -31,7 +31,15 @@ urlpatterns = [
     # Actions sur tickets
     path('queues/<int:queue_id>/take-ticket/', views.take_ticket, name='take-ticket'),
     path('queues/<int:queue_id>/call-next/', views.call_next_ticket, name='call-next-ticket'),
-    
+
+    # ============================================
+    # INTERFACE AGENT
+    # ============================================
+    path('agent/queue/<int:queue_id>/dashboard/', views.agent_dashboard, name='agent-dashboard'),
+    path('agent/ticket/<int:ticket_id>/served/', views.mark_ticket_served, name='mark-ticket-served'),
+    path('agent/queue/<int:queue_id>/status/', views.change_queue_status, name='change-queue-status'),
+    path('agent/queue/<int:queue_id>/stats/', views.queue_agent_stats, name='queue-agent-stats'),
+
     # ============================================
     # STATISTIQUES
     # ============================================

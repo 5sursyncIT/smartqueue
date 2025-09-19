@@ -105,9 +105,15 @@ python manage.py test
 # Test specific app
 python manage.py test apps.business
 
-# Test with coverage (if coverage is configured)
+# Test with pytest (configured in requirements.txt)
+pytest
+
+# Test with coverage
 coverage run manage.py test
 coverage report
+
+# Test SMS service
+python test_sms.py
 ```
 
 ### API Documentation
@@ -184,6 +190,37 @@ DATABASE_URL=sqlite:///db.sqlite3
 
 ### Phone Number Handling
 Always validate Senegalese phone numbers with the regex: `^\+221[0-9]{9}$`
+
+### SMS Configuration
+SmartQueue supports multiple SMS providers for Senegal:
+- **Orange Sénégal** (Primary): Official Orange SMS API with OAuth 2.0
+- **SMS.to** (Fallback): International gateway supporting Senegal
+- **eSMS Africa** (Alternative): Africa-focused SMS provider
+
+#### SMS Provider Setup
+1. Copy `.env.example` to `.env`
+2. Add your API keys:
+   ```
+   ORANGE_SMS_CLIENT_ID=your_client_id
+   ORANGE_SMS_CLIENT_SECRET=your_client_secret
+   SMS_TO_API_KEY=your_sms_to_key
+   ESMS_AFRICA_API_KEY=your_esms_key
+   ```
+3. Test with: `python test_sms.py`
+
+#### SMS Usage
+```python
+from apps.notifications.sms_service import sms_service
+
+# Send SMS
+result = sms_service.send_sms('+221781234567', 'Your message')
+
+# Send OTP
+result = sms_service.send_otp('+221781234567', '123456')
+
+# Check provider status
+status = sms_service.get_provider_status()
+```
 
 ### Error Handling  
 - Use DRF's standard error responses

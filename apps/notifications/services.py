@@ -317,62 +317,41 @@ class NotificationService:
         self.send_notification(notification)
     
     def _send_sms(self, notification: Notification) -> bool:
-        """Envoyer un SMS via les fournisseurs configurés"""
+        """Envoyer un SMS via le nouveau service SMS amélioré"""
         try:
-            # Récupérer le fournisseur SMS actif
-            provider = SMSProvider.objects.filter(
-                is_active=True
-            ).order_by('priority').first()
-            
-            if not provider:
-                logger.error("Aucun fournisseur SMS configuré")
-                return False
-            
-            # Préparer les données
-            data = {
-                'to': notification.phone_number,
-                'message': notification.message,
-                'from': provider.sender_name
-            }
-            
-            # Headers avec authentification
-            headers = {
-                'Content-Type': 'application/json',
-                'Authorization': f'Bearer {provider.api_key}'
-            }
-            
-            # Envoyer via l'API du fournisseur
-            response = requests.post(
-                provider.api_url,
-                json=data,
-                headers=headers,
-                timeout=30
+            # Importer le nouveau service SMS
+            from .sms_service import sms_service
+
+            # Envoyer via le nouveau service
+            result = sms_service.send_sms(
+                phone_number=notification.phone_number,
+                message=notification.message
             )
-            
+
             # Log du résultat
             NotificationLog.objects.create(
                 notification=notification,
-                action='sent' if response.status_code == 200 else 'failed',
-                provider_used=provider,
-                cost=provider.cost_per_sms if response.status_code == 200 else None,
+                action='sent' if result['success'] else 'failed',
+                cost=result.get('cost', 0),
                 details={
-                    'status_code': response.status_code,
-                    'response': response.text[:500],  # Limiter la taille
-                    'provider': provider.name
+                    'provider': result.get('provider'),
+                    'message_id': result.get('message_id'),
+                    'error': result.get('error'),
+                    'response': result.get('details')
                 }
             )
-            
-            return response.status_code == 200
-            
+
+            return result['success']
+
         except Exception as e:
             logger.error(f"Erreur envoi SMS: {e}")
-            
+
             NotificationLog.objects.create(
                 notification=notification,
                 action='failed',
                 details={'error': str(e)}
             )
-            
+
             return False
     
     def _send_email(self, notification: Notification) -> bool:
@@ -529,4 +508,45 @@ class NotificationAutomationService:
             return None
         except Exception as e:
             logger.error(f"Erreur notification rappel RDV: {e}")
+            return None
+
+    def notify_invoice_reminder(self, invoice):
+        """Notifier un rappel de facture impayée"""
+        try:
+            template = NotificationTemplate.objects.get(
+                category='invoice_reminder',
+                notification_type='sms', # Assuming SMS for invoice reminders
+                is_active=True
+            )
+
+            # The recipient should be an admin/staff of the organization
+            # For simplicity, let's assume the organization has an admin user
+            # This might need refinement based on how organization admins are identified
+            # For now, let's try to get the first staff member of the organization
+            recipient = invoice.organization.staff_members.first().user # Assuming staff_members is a related_name to StaffProfile
+
+            if not recipient:
+                logger.warning(f"Aucun destinataire trouvé pour la facture {invoice.invoice_number} de l'organisation {invoice.organization.name}")
+                return None
+
+            variables = {
+                'invoice_number': invoice.invoice_number,
+                'organization_name': invoice.organization.name,
+                'amount': invoice.amount,
+                'due_date': invoice.due_date.strftime('%d/%m/%Y'),
+            }
+
+            return self.notification_service.create_notification(
+                template=template,
+                recipient=recipient,
+                content_object=invoice, # Link the notification to the invoice
+                custom_variables=variables,
+                priority='high'
+            )
+
+        except NotificationTemplate.DoesNotExist:
+            logger.warning("Template 'invoice_reminder' SMS non trouvé")
+            return None
+        except Exception as e:
+            logger.error(f"Erreur notification rappel facture: {e}")
             return None

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -309,17 +310,37 @@ ADMIN_EMAIL = 'admin@smartqueue.sn'
 # SMS Configuration (APIs Sénégal)
 SMS_CONFIG = {
     'ENABLED': True,
-    'DEFAULT_PROVIDER': 'orange',  # orange, free, wave
+    'DEFAULT_PROVIDER': 'orange',  # orange, sms_to, esms_africa
     'PROVIDERS': {
         'orange': {
-            'API_URL': 'https://api.orange.com/smsmessaging/v1/',
-            'CLIENT_ID': '',  # À configurer
-            'CLIENT_SECRET': '',
+            'NAME': 'Orange Sénégal SMS API',
+            'API_URL': 'https://api.orange.com/smsmessaging/v1/outbound',
+            'AUTH_URL': 'https://api.orange.com/oauth/v3/token',
+            'CLIENT_ID': os.getenv('ORANGE_SMS_CLIENT_ID', ''),
+            'CLIENT_SECRET': os.getenv('ORANGE_SMS_CLIENT_SECRET', ''),
+            'SENDER_NAME': 'SmartQueue',
+            'RATE_LIMIT_PER_MINUTE': 60,
+            'COST_PER_SMS': 20.00,  # FCFA
+            'PRIORITY': 1,
         },
-        'free': {
-            'API_URL': 'https://api.free.sn/sms/',
-            'API_KEY': '',
+        'sms_to': {
+            'NAME': 'SMS.to Gateway',
+            'API_URL': 'https://api.sms.to/sms/send',
+            'API_KEY': os.getenv('SMS_TO_API_KEY', ''),
+            'SENDER_NAME': 'SmartQueue',
+            'RATE_LIMIT_PER_MINUTE': 300,
+            'COST_PER_SMS': 25.00,  # FCFA
+            'PRIORITY': 2,
         },
+        'esms_africa': {
+            'NAME': 'eSMS Africa',
+            'API_URL': 'https://api.esmsafrica.io/v1/sms/send',
+            'API_KEY': os.getenv('ESMS_AFRICA_API_KEY', ''),
+            'SENDER_NAME': 'SmartQueue',
+            'RATE_LIMIT_PER_MINUTE': 120,
+            'COST_PER_SMS': 22.00,  # FCFA
+            'PRIORITY': 3,
+        }
     }
 }
 

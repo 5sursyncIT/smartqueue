@@ -57,6 +57,7 @@ class NotificationTemplate(models.Model):
         ('account_created', 'Compte créé'),
         ('password_reset', 'Reset mot de passe'),
         ('system_maintenance', 'Maintenance système'),
+        ('invoice_reminder', 'Rappel Facture'),
     ]
     
     id = models.BigAutoField(primary_key=True)
@@ -206,9 +207,9 @@ class Notification(models.Model):
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
-        verbose_name="Type d'objet"
+        verbose_name="Type d\'objet"
     )
-    object_id = models.PositiveIntegerField(verbose_name="ID de l'objet")
+    object_id = models.PositiveIntegerField(verbose_name="ID de l\'objet")
     content_object = GenericForeignKey('content_type', 'object_id')
     
     # Contenu personnalisé (après template processing)
@@ -332,7 +333,7 @@ class Notification(models.Model):
     
     @property
     def is_overdue(self):
-        """Notification en retard si pas envoyée après l'heure prévue + 30 min"""
+        """Notification en retard si pas envoyée après l\'heure prévue + 30 min"""
         if self.status in ['sent', 'delivered', 'failed', 'cancelled']:
             return False
         
@@ -365,7 +366,7 @@ class Notification(models.Model):
         self.save(update_fields=['status', 'read_at'])
     
     def mark_as_failed(self, error_message):
-        """Marquer comme échoué avec message d'erreur"""
+        """Marquer comme échoué avec message d\'erreur"""
         self.status = 'failed'
         self.last_error = error_message
         self.attempt_count += 1
@@ -449,7 +450,7 @@ class NotificationPreference(models.Model):
     appointment_reminder_hours = models.PositiveIntegerField(
         default=24,
         verbose_name="Rappel RDV (heures avant)",
-        help_text="Nombre d'heures avant le RDV pour le rappel"
+        help_text="Nombre d\'heures avant le RDV pour le rappel"
     )
     
     # Horaires de réception
@@ -599,7 +600,7 @@ class NotificationLog(models.Model):
     """
     Journal des envois de notifications pour audit
     
-    Conserve l'historique de tous les envois pour analytics,
+    Conserve l\'historique de tous les envois pour analytics,
     facturation, debugging, conformité RGPD
     """
     

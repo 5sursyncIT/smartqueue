@@ -242,6 +242,203 @@ def call_next_ticket(request, queue_id):
         return Response({'error': 'File non trouvée'}, status=404)
 
 # ============================================
+# INTERFACE AGENT (GESTION FILES)
+# ============================================
+
+@api_view(['GET'])
+def agent_dashboard(request, queue_id):
+    """Dashboard agent pour gestion d'une file d'attente"""
+    try:
+        queue = Queue.objects.get(id=queue_id, is_active=True)
+
+        # Vérifier permissions agent
+        if not request.user.user_type in ['staff', 'admin', 'super_admin']:
+            return Response({'error': 'Permission refusée'}, status=403)
+
+        # Données dashboard
+        dashboard_data = {
+            'queue': QueueDetailSerializer(queue).data,
+            'tickets_waiting': Ticket.objects.filter(
+                queue=queue, status='waiting'
+            ).count(),
+            'current_ticket': None,
+            'next_tickets': [],
+            'today_stats': {
+                'served': Ticket.objects.filter(
+                    queue=queue,
+                    status='served',
+                    created_at__date=timezone.now().date()
+                ).count(),
+                'cancelled': Ticket.objects.filter(
+                    queue=queue,
+                    status='cancelled',
+                    created_at__date=timezone.now().date()
+                ).count(),
+                'no_show': Ticket.objects.filter(
+                    queue=queue,
+                    status='no_show',
+                    created_at__date=timezone.now().date()
+                ).count()
+            }
+        }
+
+        # Ticket actuellement appelé/servi
+        current = Ticket.objects.filter(
+            queue=queue,
+            status__in=['called', 'serving']
+        ).first()
+        if current:
+            dashboard_data['current_ticket'] = TicketDetailSerializer(current).data
+
+        # Prochains tickets en attente
+        next_tickets = Ticket.objects.filter(
+            queue=queue,
+            status='waiting'
+        ).order_by('queue_position')[:5]
+        dashboard_data['next_tickets'] = TicketListSerializer(next_tickets, many=True).data
+
+        return Response(dashboard_data)
+
+    except Queue.DoesNotExist:
+        return Response({'error': 'File non trouvée'}, status=404)
+
+@api_view(['POST'])
+def mark_ticket_served(request, ticket_id):
+    """Marquer un ticket comme servi"""
+    try:
+        ticket = Ticket.objects.get(id=ticket_id)
+
+        # Vérifier permissions agent
+        if not request.user.user_type in ['staff', 'admin', 'super_admin']:
+            return Response({'error': 'Permission refusée'}, status=403)
+
+        # Vérifier statut valide
+        if ticket.status not in ['called', 'serving']:
+            return Response({
+                'error': 'Ticket doit être appelé ou en cours de service'
+            }, status=400)
+
+        # Marquer comme servi
+        ticket.status = 'served'
+        ticket.service_ended_at = timezone.now()
+        ticket.save()
+
+        return Response({
+            'success': True,
+            'message': f'Ticket {ticket.ticket_number} marqué comme servi',
+            'ticket': TicketDetailSerializer(ticket).data
+        })
+
+    except Ticket.DoesNotExist:
+        return Response({'error': 'Ticket non trouvé'}, status=404)
+
+@api_view(['POST'])
+def change_queue_status(request, queue_id):
+    """Changer le statut d'une file (pause, reprise, fermeture)"""
+    try:
+        queue = Queue.objects.get(id=queue_id, is_active=True)
+
+        # Vérifier permissions agent
+        if not request.user.user_type in ['staff', 'admin', 'super_admin']:
+            return Response({'error': 'Permission refusée'}, status=403)
+
+        new_status = request.data.get('status')
+        valid_statuses = ['active', 'paused', 'closed', 'maintenance']
+
+        if new_status not in valid_statuses:
+            return Response({
+                'error': f'Statut invalide. Valeurs possibles: {valid_statuses}'
+            }, status=400)
+
+        old_status = queue.current_status
+        queue.current_status = new_status
+        queue.save()
+
+        return Response({
+            'success': True,
+            'message': f'File {queue.name} changée de {old_status} à {new_status}',
+            'queue': QueueDetailSerializer(queue).data
+        })
+
+    except Queue.DoesNotExist:
+        return Response({'error': 'File non trouvée'}, status=404)
+
+@api_view(['GET'])
+def queue_agent_stats(request, queue_id):
+    """Statistiques détaillées pour agent d'une file"""
+    try:
+        queue = Queue.objects.get(id=queue_id, is_active=True)
+
+        # Vérifier permissions agent
+        if not request.user.user_type in ['staff', 'admin', 'super_admin']:
+            return Response({'error': 'Permission refusée'}, status=403)
+
+        today = timezone.now().date()
+
+        stats = {
+            'queue_name': queue.name,
+            'current_status': queue.current_status,
+            'today': {
+                'total_tickets': Ticket.objects.filter(
+                    queue=queue,
+                    created_at__date=today
+                ).count(),
+                'served': Ticket.objects.filter(
+                    queue=queue,
+                    status='served',
+                    created_at__date=today
+                ).count(),
+                'waiting': Ticket.objects.filter(
+                    queue=queue,
+                    status='waiting'
+                ).count(),
+                'cancelled': Ticket.objects.filter(
+                    queue=queue,
+                    status='cancelled',
+                    created_at__date=today
+                ).count(),
+                'no_show': Ticket.objects.filter(
+                    queue=queue,
+                    status='no_show',
+                    created_at__date=today
+                ).count()
+            },
+            'capacity': {
+                'max_capacity': queue.max_capacity,
+                'current_usage': Ticket.objects.filter(
+                    queue=queue,
+                    status__in=['waiting', 'called', 'serving']
+                ).count()
+            },
+            'timing': {
+                'estimated_wait_per_person': queue.estimated_wait_time_per_person,
+                'total_estimated_wait': queue.get_estimated_wait_time() if hasattr(queue, 'get_estimated_wait_time') else 0
+            }
+        }
+
+        # Pourcentage d'utilisation capacité
+        if queue.max_capacity and queue.max_capacity > 0:
+            stats['capacity']['usage_percentage'] = round(
+                (stats['capacity']['current_usage'] / queue.max_capacity) * 100, 1
+            )
+        else:
+            stats['capacity']['usage_percentage'] = 0
+
+        # Taux de réussite
+        total_processed = stats['today']['served'] + stats['today']['cancelled'] + stats['today']['no_show']
+        if total_processed > 0:
+            stats['today']['success_rate'] = round(
+                (stats['today']['served'] / total_processed) * 100, 1
+            )
+        else:
+            stats['today']['success_rate'] = 0
+
+        return Response(stats)
+
+    except Queue.DoesNotExist:
+        return Response({'error': 'File non trouvée'}, status=404)
+
+# ============================================
 # STATISTIQUES
 # ============================================
 
@@ -257,5 +454,5 @@ def queue_management_stats(request):
         'tickets_waiting': Ticket.objects.filter(status='waiting').count(),
         'tickets_being_served': Ticket.objects.filter(status='serving').count()
     }
-    
+
     return Response(stats)

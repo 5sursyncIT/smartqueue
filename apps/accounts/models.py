@@ -1,3 +1,4 @@
+
 # apps/accounts/models.py
 """
 Modèles d'utilisateurs pour SmartQueue Sénégal
@@ -8,6 +9,8 @@ from django.db import models
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 import uuid
+
+from apps.business.models import Organization # Import ajouté
 
 class User(AbstractUser):
     """
@@ -66,21 +69,25 @@ class User(AbstractUser):
     )
     
     # ==============================================
-    # NUMÉRO DE TÉLÉPHONE (OBLIGATOIRE AU SÉNÉGAL)
+    # NUMÉRO DE TÉLÉPHONE (OPTIONNEL - Focus EMAIL)
     # ==============================================
-    
-    # Validation pour numéros sénégalais (+221XXXXXXXXX)
+
+    # ⚠️ MODIFICATION SUPERVISEUR : Téléphone optionnel, EMAIL prioritaire
+    # Validation pour numéros sénégalais (+221XXXXXXXXX) - OPTIONNEL
     phone_regex = RegexValidator(
         regex=r'^\+221[0-9]{9}$',
-        message=_('Le numéro doit être au format: +221XXXXXXXXX')
+        message=_('Le numéro doit être au format: +221XXXXXXXXX (Optionnel)')
     )
     
+    # ⚠️ TÉLÉPHONE MAINTENANT OPTIONNEL (Décision superviseur)
     phone_number = models.CharField(
         validators=[phone_regex],
         max_length=13,
+        blank=True,  # ← OPTIONNEL maintenant
+        null=True,   # ← OPTIONNEL maintenant
         unique=True,
-        verbose_name=_('Numéro de téléphone'),
-        help_text=_('Format requis: +221XXXXXXXXX')
+        verbose_name=_('Numéro de téléphone (optionnel)'),
+        help_text=_('Format: +221XXXXXXXXX - OPTIONNEL (Email prioritaire)')
     )
     
     # ==============================================
@@ -96,30 +103,38 @@ class User(AbstractUser):
     )
     
     # ==============================================
-    # VÉRIFICATION DU TÉLÉPHONE
+    # VÉRIFICATION EMAIL (Remplace vérification téléphone)
     # ==============================================
-    
-    is_phone_verified = models.BooleanField(
+
+    # ⚠️ MODIFICATION SUPERVISEUR : Vérification EMAIL au lieu de SMS
+    is_email_verified = models.BooleanField(
         default=False,
-        verbose_name=_('Téléphone vérifié'),
-        help_text=_('Le numéro a été vérifié par SMS')
+        verbose_name=_('Email vérifié'),
+        help_text=_('L\'adresse email a été vérifiée')
     )
-    
-    # Code de vérification SMS (temporaire)
-    verification_code = models.CharField(
-        max_length=6, 
-        blank=True, 
+
+    # Code de vérification EMAIL (temporaire)
+    email_verification_code = models.CharField(
+        max_length=6,
+        blank=True,
         null=True,
-        verbose_name=_('Code de vérification'),
-        help_text=_('Code à 6 chiffres envoyé par SMS')
+        verbose_name=_('Code de vérification email'),
+        help_text=_('Code à 6 chiffres envoyé par email')
     )
-    
+
     # Quand le code expire
-    verification_code_expires = models.DateTimeField(
-        blank=True, 
+    email_verification_expires = models.DateTimeField(
+        blank=True,
         null=True,
-        verbose_name=_('Expiration du code')
+        verbose_name=_('Expiration du code email')
     )
+
+    # ⚠️ TÉLÉPHONE VÉRIFICATION COMMENTÉE (SMS désactivé)
+    # is_phone_verified = models.BooleanField(
+    #     default=False,
+    #     verbose_name=_('Téléphone vérifié'),
+    #     help_text=_('Le numéro a été vérifié par SMS - DÉSACTIVÉ')
+    # )
     
     # ==============================================
     # INFORMATIONS PERSONNELLES OPTIONNELLES
@@ -176,11 +191,12 @@ class User(AbstractUser):
         help_text=_('Recevoir des notifications sur mobile')
     )
     
-    sms_notifications_enabled = models.BooleanField(
-        default=True,
-        verbose_name=_('Notifications SMS'),
-        help_text=_('Recevoir des SMS pour les files d\'attente')
-    )
+    # ⚠️ SMS DÉSACTIVÉ (Décision superviseur - Focus PUSH + EMAIL)
+    # sms_notifications_enabled = models.BooleanField(
+    #     default=False,  # Désactivé par défaut
+    #     verbose_name=_('Notifications SMS'),
+    #     help_text=_('Recevoir des SMS pour les files d\'attente - DÉSACTIVÉ')
+    # )
     
     email_notifications_enabled = models.BooleanField(
         default=True,
@@ -248,7 +264,8 @@ class User(AbstractUser):
         indexes = [
             models.Index(fields=['user_type']),
             models.Index(fields=['phone_number']),
-            models.Index(fields=['is_phone_verified']),
+            # models.Index(fields=['is_phone_verified']),  # Commenté (SMS désactivé)
+            models.Index(fields=['is_email_verified']),  # Nouvel index email
             models.Index(fields=['created_at']),
         ]
     
@@ -291,3 +308,26 @@ class User(AbstractUser):
     def is_super_admin(self):
         """Vérifie si l'utilisateur est super admin SmartQueue"""
         return self.user_type == 'super_admin'
+
+
+# ==============================================
+# PROFIL D'EMPLOYÉ (STAFF PROFILE)
+# ==============================================
+
+class StaffProfile(models.Model):
+    """
+    Profil étendu pour les utilisateurs de type 'staff' ou 'admin'.
+    Lie un utilisateur à une organisation spécifique.
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='staff_profile')
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='staff_members')
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Profil Employé"
+        verbose_name_plural = "Profils Employés"
+
+    def __str__(self):
+        return f"{self.user.username} - {self.organization.name}"

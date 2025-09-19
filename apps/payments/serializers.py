@@ -9,7 +9,7 @@ from decimal import Decimal
 from django.utils import timezone
 from datetime import timedelta
 from .models import (
-    PaymentProvider, Payment, PaymentMethod, PaymentLog, PaymentPlan
+    PaymentProvider, Payment, PaymentMethod, PaymentLog, PaymentPlan, SubscriptionInvoice
 )
 
 
@@ -424,10 +424,29 @@ class PaymentPlanSerializer(serializers.ModelSerializer):
         model = PaymentPlan
         fields = [
             'id', 'name', 'plan_type', 'plan_type_display',
-            'ticket_fee', 'appointment_fee', 'no_show_penalty',
-            'max_tickets_per_month', 'max_appointments_per_month',
+            'monthly_fee', 'annual_fee', 'fee_per_ticket', 'fee_per_sms',
+            'max_tickets_per_month', 'max_sms_per_month',
             'has_premium_support', 'has_analytics', 'has_custom_branding',
             'is_active', 'created_at'
+        ]
+
+
+class SubscriptionInvoiceSerializer(serializers.ModelSerializer):
+    """
+    Serializer pour les factures d'abonnement (B2B).
+    """
+    organization_name = serializers.CharField(source='organization.name', read_only=True)
+    plan_name = serializers.CharField(source='plan.name', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+
+    class Meta:
+        model = SubscriptionInvoice
+        fields = [
+            'id', 'uuid', 'invoice_number',
+            'organization_name', 'plan_name',
+            'amount', 'status', 'status_display',
+            'billing_period_start', 'billing_period_end',
+            'due_date', 'paid_at', 'created_at'
         ]
 
 
@@ -494,8 +513,7 @@ class QuickPaymentSerializer(serializers.Serializer):
     
     def validate(self, attrs):
         """Validation globale"""
-        from apps.organizations.models import Organization
-        from apps.services.models import Service
+        from apps.business.models import Organization, Service
         
         # Vérifier que l'organisation existe
         try:

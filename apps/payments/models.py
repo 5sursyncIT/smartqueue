@@ -167,9 +167,9 @@ class PaymentProvider(models.Model):
 
 class Payment(models.Model):
     """
-    Paiement effectué par un client
+    Paiement effectué par un client (B2C)
     
-    Peut être lié à un ticket (paiement express) ou un RDV (prépaiement)
+    Lié à un ticket (paiement express) ou un RDV (prépaiement) pour un service VIP.
     """
     
     STATUS_CHOICES = [
@@ -186,8 +186,8 @@ class Payment(models.Model):
         ('ticket_fee', 'Frais de ticket'),
         ('appointment_fee', 'Frais de RDV'),
         ('service_fee', 'Frais de service'),
+        ('subscription_fee', 'Frais d\'abonnement'),
         ('penalty_fee', 'Pénalité (no-show)'),
-        ('subscription_fee', 'Abonnement premium'),
         ('other', 'Autre'),
     ]
     
@@ -245,6 +245,15 @@ class Payment(models.Model):
         null=True, blank=True,
         related_name='payments',
         verbose_name="RDV lié"
+    )
+
+    invoice = models.ForeignKey(
+        'SubscriptionInvoice',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='payment_attempts',
+        verbose_name="Facture d'abonnement liée"
     )
     
     # Détails du paiement
@@ -356,8 +365,8 @@ class Payment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        verbose_name = "Paiement"
-        verbose_name_plural = "Paiements"
+        verbose_name = "Paiement (B2C)"
+        verbose_name_plural = "Paiements (B2C)"
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['customer', 'status']),
@@ -548,9 +557,9 @@ class PaymentLog(models.Model):
 
 class PaymentPlan(models.Model):
     """
-    Plans de tarification pour les organisations
+    Plans de tarification pour les organisations (B2B)
     
-    Définit les frais par service ou par organisation
+    Définit les frais d'abonnement au service SmartQueue.
     """
     
     PLAN_TYPES = [
@@ -572,26 +581,26 @@ class PaymentPlan(models.Model):
         verbose_name="Type de plan"
     )
     
-    # Frais par service
-    ticket_fee = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=Decimal('0.00'),
+    # Coût de l'abonnement
+    monthly_fee = models.DecimalField(
+        max_digits=10, decimal_places=2, default=Decimal('0.00'),
+        verbose_name="Frais mensuels (CFA)"
+    )
+    
+    annual_fee = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal('0.00'),
+        verbose_name="Frais annuels (CFA)"
+    )
+    
+    # Frais additionnels
+    fee_per_ticket = models.DecimalField(
+        max_digits=10, decimal_places=2, default=Decimal('0.00'),
         verbose_name="Frais par ticket (CFA)"
     )
     
-    appointment_fee = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=Decimal('0.00'),
-        verbose_name="Frais par RDV (CFA)"
-    )
-    
-    no_show_penalty = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=Decimal('0.00'),
-        verbose_name="Pénalité no-show (CFA)"
+    fee_per_sms = models.DecimalField(
+        max_digits=10, decimal_places=2, default=Decimal('0.00'),
+        verbose_name="Frais par SMS (CFA)"
     )
     
     # Limites
@@ -601,9 +610,9 @@ class PaymentPlan(models.Model):
         help_text="null = illimité"
     )
     
-    max_appointments_per_month = models.PositiveIntegerField(
+    max_sms_per_month = models.PositiveIntegerField(
         null=True, blank=True,
-        verbose_name="Max RDV/mois"
+        verbose_name="Max SMS/mois"
     )
     
     # Fonctionnalités
@@ -631,8 +640,106 @@ class PaymentPlan(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        verbose_name = "Plan de tarification"
-        verbose_name_plural = "Plans de tarification"
+        verbose_name = "Plan de tarification (B2B)"
+        verbose_name_plural = "Plans de tarification (B2B)"
     
     def __str__(self):
         return f"{self.name} ({self.get_plan_type_display()})"
+
+
+class SubscriptionInvoice(models.Model):
+    """
+    Facture d'abonnement pour une organisation (B2B).
+    Représente une facture envoyée par SmartQueue à une organisation cliente.
+    """
+    
+    STATUS_CHOICES = [
+        ('due', 'À payer'),
+        ('paid', 'Payée'),
+        ('overdue', 'En retard'),
+        ('cancelled', 'Annulée'),
+    ]
+    
+    id = models.BigAutoField(primary_key=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    
+    invoice_number = models.CharField(
+        max_length=30, unique=True, editable=False,
+        verbose_name="Numéro de facture"
+    )
+    
+    # Relations
+    organization = models.ForeignKey(
+        'business.Organization',
+        on_delete=models.PROTECT,
+        related_name='invoices',
+        verbose_name="Organisation facturée"
+    )
+    
+    plan = models.ForeignKey(
+        PaymentPlan,
+        on_delete=models.PROTECT,
+        verbose_name="Plan facturé"
+    )
+    
+    # Détails financiers
+    amount = models.DecimalField(
+        max_digits=12, decimal_places=2,
+        verbose_name="Montant (CFA)"
+    )
+    
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='due',
+        verbose_name="Statut"
+    )
+    
+    # Période de facturation
+    billing_period_start = models.DateField(verbose_name="Début de période")
+    billing_period_end = models.DateField(verbose_name="Fin de période")
+    
+    # Dates clés
+    due_date = models.DateField(verbose_name="Date d'échéance")
+    paid_at = models.DateTimeField(null=True, blank=True, verbose_name="Payée le")
+    last_reminder_sent_at = models.DateTimeField(null=True, blank=True, verbose_name="Dernier rappel envoyé le")
+    
+    # Métadonnées
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Facture d'abonnement (B2B)"
+        verbose_name_plural = "Factures d'abonnement (B2B)"
+        ordering = ['-due_date']
+    
+    def __str__(self):
+        return f"{self.invoice_number} - {self.organization.name} ({self.amount} CFA)"
+    
+    def save(self, *args, **kwargs):
+        if not self.invoice_number:
+            self.invoice_number = self._generate_invoice_number()
+        super().save(*args, **kwargs)
+    
+    def _generate_invoice_number(self):
+        """Génère un numéro de facture unique, ex: FACT-202310-001"""
+        from django.utils import timezone
+        now = timezone.now()
+        month_str = now.strftime('%Y%m')
+        
+        last_invoice = SubscriptionInvoice.objects.filter(
+            invoice_number__startswith=f'FACT-{month_str}'
+        ).order_by('invoice_number').last()
+        
+        if last_invoice:
+            last_num = int(last_invoice.invoice_number.split('-')[-1])
+            new_num = last_num + 1
+        else:
+            new_num = 1
+            
+        return f'FACT-{month_str}-{new_num:03d}'
+
+
+
+
+

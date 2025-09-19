@@ -14,17 +14,17 @@ SECRET_KEY = env('SECRET_KEY', default='django-insecure-dev-key-change-in-produc
 DEBUG = True
 
 # Hôtes autorisés en développement
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '34.31.49.122']
 
 # ==============================================
-# BASE DE DONNÉES - DÉVELOPPEMENT
+# BASE DE DONNÉES - DÉVELOPPEMENT (POSTGRESQL)
 # ==============================================
 
-# SQLite pour développement (simple et rapide)
+# SQLite pour développement et tests (plus simple)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db_dev.sqlite3',
     }
 }
 

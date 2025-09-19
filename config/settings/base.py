@@ -314,16 +314,15 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CHANNEL_LAYERS = {
     'default': {
-        # Mode développement sans Redis serveur
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
     },
-    
-    # Configuration Redis pour production (prête mais désactivée)
+
+    # Mode développement sans Redis (fallback)
     # 'default': {
-    #     'BACKEND': 'channels_redis.core.RedisChannelLayer',
-    #     'CONFIG': {
-    #         "hosts": [('127.0.0.1', 6379)],
-    #     },
+    #     'BACKEND': 'channels.layers.InMemoryChannelLayer',
     # },
 }
 
@@ -417,3 +416,79 @@ X_FRAME_OPTIONS = 'DENY'               # Protection clickjacking
 
 # Type de clé primaire par défaut
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ==============================================
+# SMS CONFIGURATION (APIs Sénégal)
+# ==============================================
+
+SMS_CONFIG = {
+    'ENABLED': True,
+    'DEFAULT_PROVIDER': 'orange',  # orange, sms_to, esms_africa
+    'PROVIDERS': {
+        'orange': {
+            'NAME': 'Orange Sénégal SMS API',
+            'API_URL': 'https://api.orange.com/smsmessaging/v1/outbound',
+            'AUTH_URL': 'https://api.orange.com/oauth/v3/token',
+            'CLIENT_ID': env('ORANGE_SMS_CLIENT_ID', default=''),
+            'CLIENT_SECRET': env('ORANGE_SMS_CLIENT_SECRET', default=''),
+            'SENDER_NAME': 'SmartQueue',
+            'RATE_LIMIT_PER_MINUTE': 60,
+            'COST_PER_SMS': 20.00,  # FCFA
+            'PRIORITY': 1,
+        },
+        'free': {
+            'NAME': 'Free Sénégal',
+            'API_URL': 'https://gateway.free.sn/api/sms/send',  # URL supposée
+            'AUTH_URL': 'https://gateway.free.sn/api/auth/token',
+            'CLIENT_ID': env('FREE_SMS_CLIENT_ID', default=''),
+            'CLIENT_SECRET': env('FREE_SMS_CLIENT_SECRET', default=''),
+            'SENDER_NAME': 'SmartQueue',
+            'RATE_LIMIT_PER_MINUTE': 50,
+            'COST_PER_SMS': 18.00,  # FCFA (généralement moins cher)
+            'PRIORITY': 2,
+        },
+        'expresso': {
+            'NAME': 'Expresso Sénégal',
+            'API_URL': 'https://api.expresso.sn/v1/sms/send',  # URL supposée
+            'AUTH_URL': 'https://api.expresso.sn/v1/auth/token',
+            'API_KEY': env('EXPRESSO_SMS_API_KEY', default=''),
+            'CLIENT_ID': env('EXPRESSO_SMS_CLIENT_ID', default=''),
+            'CLIENT_SECRET': env('EXPRESSO_SMS_CLIENT_SECRET', default=''),
+            'SENDER_NAME': 'SmartQueue',
+            'RATE_LIMIT_PER_MINUTE': 40,
+            'COST_PER_SMS': 22.00,  # FCFA
+            'PRIORITY': 3,
+        }
+    }
+}
+
+# ==============================================
+# PAYMENT CONFIGURATION (Mobile Money Sénégal)
+# ==============================================
+
+PAYMENT_CONFIG = {
+    'ENABLED': True,
+    'DEFAULT_PROVIDER': 'wave',
+    'PROVIDERS': {
+        'wave': {
+            'NAME': 'Wave Money',
+            'API_URL': 'https://api.wave.com/v1/payments',
+            'API_KEY': env('WAVE_API_KEY', default=''),
+            'SECRET_KEY': env('WAVE_SECRET_KEY', default=''),
+            'PRIORITY': 1,
+        },
+        'orange_money': {
+            'NAME': 'Orange Money',
+            'API_URL': 'https://api.orange.com/money/v1/payments',
+            'CLIENT_ID': env('ORANGE_MONEY_CLIENT_ID', default=''),
+            'CLIENT_SECRET': env('ORANGE_MONEY_CLIENT_SECRET', default=''),
+            'PRIORITY': 2,
+        },
+        'free_money': {
+            'NAME': 'Free Money',
+            'API_URL': 'https://api.freemoney.sn/v1/payments',
+            'API_KEY': env('FREE_MONEY_API_KEY', default=''),
+            'PRIORITY': 3,
+        }
+    }
+}
